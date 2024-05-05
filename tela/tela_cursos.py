@@ -32,7 +32,7 @@ class TelaCursos(TelaBase):
         print('\n')
         self.esperar_resposta()
 
-    def incluir_curso(self):
+    def incluir_curso(self) -> dict:
         self.limpar_tela()
         print('--- CADASTRO DE CURSO ---\n')
         codigo = input('Código do curso: ')
@@ -57,26 +57,28 @@ class TelaCursos(TelaBase):
             return self.excluir_curso()
         return int(codigo)
 
-    def alterar_curso(self):
+    def alterar_curso(self) -> dict:
         self.limpar_tela()
+        dados_retorno = dict()
         print('--- ALTERAR CURSO ---\n')
+        # Tratamento para o código do curso a ser alterado
         codigo_antigo = input('Código do curso a ser alterado: ')
         if not codigo_antigo.isnumeric():
-            self.mostrar_mensagem('Tentativa de pesquisa por código não númerico')
+            self.mostrar_mensagem('Tentativa de alteração por código não númerico')
             return self.alterar_curso()
-        # Tratamento para o novo código
+        dados_retorno["codigo_antigo"] = int(codigo_antigo)
+        # Tratamento para o novo código (Se for inserido)
         novo_codigo = input('Novo código: ')
-        if novo_codigo != "" and not novo_codigo.isnumeric():
-            self.mostrar_mensagem('O novo código deve ser um inteiro')
-            return self.alterar_curso()
-        
-        # Tratamento para o novo nome
+        if novo_codigo and not novo_codigo.isspace():
+            if not novo_codigo.isnumeric():
+                self.mostrar_mensagem('O novo código deve ser um inteiro')
+                return self.alterar_curso()
+            dados_retorno["novo_codigo"] = int(novo_codigo)
+        # Tratamento para o novo nome (Se for inserido)
         novo_nome = input('Novo nome: ')
-        if not (5 <= len(novo_nome) <= 60):
-            self.mostrar_mensagem('O novo nome do curso deve ter entre 5 a 60 caracteres')
-            return self.alterar_curso()
-        return {
-            'codigo_antigo': int(codigo_antigo),
-            'novo_codigo': novo_codigo,
-            'novo_nome': novo_nome.upper()
-        }
+        if novo_nome and not novo_nome.isspace():
+            if not (5 <= len(novo_nome) <= 60):
+                self.mostrar_mensagem('O novo nome do curso deve ter entre 5 a 60 caracteres')
+                return self.alterar_curso()
+            dados_retorno["novo_nome"] = novo_nome.upper()
+        return dados_retorno

@@ -86,8 +86,6 @@ class ControladorCursos:
             return self.tela_cursos.mostrar_mensagem('Nenhum curso cadastrado')
         dados = self.tela_cursos.alterar_curso()
         codigo_antigo = dados['codigo_antigo']
-        novo_codigo = dados["novo_codigo"]
-        novo_nome = dados["novo_nome"]
         indice_curso = self.pesquisar_curso_por_codigo(codigo_antigo)
         if indice_curso == None:
             self.tela_cursos.mostrar_mensagem(
@@ -98,8 +96,14 @@ class ControladorCursos:
             f'Deseja realmente alterar o curso {curso.nome}?'
         )
         if confirmacao:
-            curso.codigo = novo_codigo
-            curso.nome = novo_nome
+            # Atualizando dados do curso que foram retornados pela interface
+            novo_codigo = dados.get('novo_codigo')
+            if novo_codigo:
+                curso.codigo = novo_codigo
+            novo_nome = dados.get('novo_nome')
+            if novo_nome:
+                curso.nome = novo_nome
+            # Retornando uma mensagem de sucesso para o usuário
             self.tela_cursos.mostrar_mensagem('Curso alterado')
         else:
             self.tela_cursos.mostrar_mensagem('Alteração cancelada')
