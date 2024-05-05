@@ -13,7 +13,7 @@ class TelaCursos(TelaBase):
     def controlador_cursos(self, controlador_cursos):
         self.__controlador_cursos = controlador_cursos
 
-    def mostrar_opcoes(self, opcoes: dict):
+    def mostrar_opcoes(self, opcoes: dict) -> str:
         self.limpar_tela()
         print('--- MÓDULO DE CURSOS ---')
         print('\nOpções disponíveis:')
