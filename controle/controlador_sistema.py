@@ -19,7 +19,7 @@ class ControladorSistema:
     def controlador_cursos(self) -> ControladorCursos:
         return self.__controlador_cursos
 
-    def executar_sistema(self):
+    def mostrar_opcoes(self):
         opcoes = {
             '1': 'Módulo de Cursos',
             '10': 'Sair'
@@ -28,6 +28,6 @@ class ControladorSistema:
         while True:
             opcao_escolhida = self.tela_sistema.mostrar_opcoes(opcoes)
             match opcao_escolhida:
-                case '1': self.controlador_cursos.executar_modulo()
+                case '1': self.controlador_cursos.mostrar_opcoes()
                 case '10': break
                 case _: self.tela_sistema.mostrar_mensagem('Opção Escolhida Não Existe')

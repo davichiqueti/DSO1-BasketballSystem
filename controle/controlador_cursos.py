@@ -20,7 +20,7 @@ class ControladorCursos:
     def tela_cursos(self, tela_cursos: TelaCursos):
         self.__tela_cursos = tela_cursos
 
-    def executar_modulo(self):
+    def mostrar_opcoes(self):
         opcoes = {
             '1': 'Listar Cursos',
             '2': 'Incluir Curso',
@@ -100,9 +100,11 @@ class ControladorCursos:
             if novo_nome != "":
                 curso.nome = novo_nome
 
-    def pesquisar_curso_por_codigo(self, codigo) -> int:
-        """Retorna a posição do curso na lista utilizando o código"""
-        codigo = int(codigo)
+    def pesquisar_curso_por_codigo(self, codigo: int) -> int:
+        """
+        Retorna o índice do curso com o código informado.\n  
+        Se nenhum curso possuir o código informado retorna `None`
+        """
         for i in range(len(self.cursos)):
             curso = self.cursos[i]
             if curso.codigo == codigo:
