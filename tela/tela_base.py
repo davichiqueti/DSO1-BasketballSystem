@@ -12,7 +12,6 @@ class TelaBase(ABC):
 
     def mostrar_mensagem(self, mensagem: str):
         print('\n[Mensagem do Sistema]:', mensagem)
-        self.esperar_resposta()
 
     def esperar_resposta(self):
         """Espera o usúario apertar `Enter` para continuar o funcionamento"""
