@@ -2,7 +2,7 @@ from entidade.curso import Curso
 
 
 class Equipe():
-    def __init__(self, nome: str, curso: Curso, codigo: int) -> None:
+    def __init__(self, nome: str, curso: Curso, codigo: int, alunos: list) -> None:
         if isinstance(nome, str):
             self.__nome = nome
         else:
@@ -15,6 +15,7 @@ class Equipe():
             self.__codigo = codigo
         else:
             raise TypeError('Equipe.codigo deve ser do tipo "int"')
+        self.__alunos = alunos
 
     @property
     def nome(self) -> str:
@@ -39,3 +40,21 @@ class Equipe():
     @curso.setter
     def curso(self, curso: Curso):
         self.__curso = curso
+
+    @property
+    def alunos(self): #-> list[Aluno]:
+        return self.__alunos
+
+    def incluir_aluno(self, aluno): #(self, aluno: Aluno):
+        #if isinstance(aluno, Aluno):
+        #    self.__alunos.append(aluno)
+        #else:
+        #    raise TypeError('Equipe.alunos só inclui objetos do tipo "Aluno"')
+        self.__alunos.append(aluno)
+
+    def excluir_aluno(self, aluno): #(self, aluno: Aluno)
+        #if not isinstance(aluno, Aluno):
+        #    raise TypeError('Equipe.alunos só possui objetos do tipo "Aluno"')
+        #else:
+        #    self.__alunos.remove(aluno)
+        self.__alunos.remove(aluno)
