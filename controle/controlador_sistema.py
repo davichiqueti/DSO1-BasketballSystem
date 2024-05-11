@@ -7,9 +7,6 @@ class ControladorSistema:
     def __init__(self):
         self.__tela_sistema = TelaSistema()
         self.__controlador_cursos = ControladorCursos()
-        self.__tela_cursos = TelaCursos()
-        self.__controlador_cursos.tela_cursos = self.__tela_cursos
-        self.__tela_cursos.controlador_cursos = self.__controlador_cursos
 
     @property
     def tela_sistema(self) -> TelaSistema:

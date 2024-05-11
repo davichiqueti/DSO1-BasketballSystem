@@ -5,14 +5,6 @@ class TelaCursos(TelaBase):
     def __init__(self):
         super().__init__()
 
-    @property
-    def controlador_cursos(self):
-        return self.__controlador_cursos
-
-    @controlador_cursos.setter
-    def controlador_cursos(self, controlador_cursos):
-        self.__controlador_cursos = controlador_cursos
-
     def mostrar_opcoes(self, opcoes: dict) -> str:
         self.limpar_tela()
         print('--- MÓDULO DE CURSOS ---')

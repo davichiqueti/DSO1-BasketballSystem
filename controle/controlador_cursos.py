@@ -6,7 +6,7 @@ import os
 class ControladorCursos:
     def __init__(self):
         self.__cursos = list()
-        self.__tela_cursos = None
+        self.__tela_cursos = TelaCursos()
 
     @property
     def cursos(self) -> list[Curso]:
@@ -15,10 +15,6 @@ class ControladorCursos:
     @property
     def tela_cursos(self) -> TelaCursos:
         return self.__tela_cursos
-
-    @tela_cursos.setter
-    def tela_cursos(self, tela_cursos: TelaCursos):
-        self.__tela_cursos = tela_cursos
 
     def mostrar_opcoes(self):
         opcoes = {
