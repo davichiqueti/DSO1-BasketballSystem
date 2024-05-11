@@ -1,12 +1,12 @@
 from entidade.curso import Curso
 from tela.tela_cursos import TelaCursos
-import os
 
 
 class ControladorCursos:
     def __init__(self):
         self.__cursos = list()
-        self.__tela_cursos = None
+        self.__tela_cursos = TelaCursos()
+        self.__controlador_sistema = None
 
     @property
     def cursos(self) -> list[Curso]:
@@ -16,9 +16,13 @@ class ControladorCursos:
     def tela_cursos(self) -> TelaCursos:
         return self.__tela_cursos
 
-    @tela_cursos.setter
-    def tela_cursos(self, tela_cursos: TelaCursos):
-        self.__tela_cursos = tela_cursos
+    @property
+    def controlador_sistema(self):
+        return self.__controlador_sistema
+
+    @controlador_sistema.setter
+    def controlador_sistema(self, controlador_sistema):
+        self.__controlador_sistema = controlador_sistema
 
     def mostrar_opcoes(self):
         opcoes = {
