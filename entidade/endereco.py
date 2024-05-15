@@ -1,6 +1,6 @@
 
 
-class Endereco():
+class Endereco:
     def __init__(self, estado: str, cidade: str, bairro: str):
         if isinstance(estado, str):
             self.__estado = estado
