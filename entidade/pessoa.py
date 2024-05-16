@@ -35,8 +35,6 @@ class Pessoa(ABC):
         else:
             raise TypeError ("Pessoa.bairro deve ser do tipo 'str'.")
 
-        self.__endereco = Endereco(self.__estado, self.__cidade, self.__bairro)
-
     @property
     def nome(self):
         return self.__nome
@@ -62,9 +60,25 @@ class Pessoa(ABC):
         self.__data_nascimento = data_nascimento
     
     @property
-    def endereco(self):
-        return self.__endereco
+    def estado(self):
+        return self.__estado
     
-    @endereco.setter
-    def endereco(self, endereco: Endereco):
-        self.__endereco = endereco
+    @estado.setter
+    def estado(self, estado: str):
+        self.__estado = estado
+    
+    @property
+    def cidade(self):
+        return self.__cidade
+    
+    @cidade.setter
+    def cidade(self, cidade: str):
+        self.__cidade = cidade
+    
+    @property
+    def bairro(self):
+        return self.__bairro
+    
+    @bairro.setter
+    def bairro(self, bairro: str):
+        self.__bairro = bairro
