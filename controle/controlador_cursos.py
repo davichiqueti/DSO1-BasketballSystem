@@ -102,11 +102,11 @@ class ControladorCursos:
         if confirmacao:
             # Atualizando dados do curso que foram retornados pela interface
             novo_codigo = dados.get('novo_codigo')
-            if novo_codigo:
-                curso.codigo = novo_codigo
-            novo_nome = dados.get('novo_nome')
-            if novo_nome:
-                curso.nome = novo_nome
+            if novo_codigo != codigo_antigo and self.pesquisar_curso_por_codigo(novo_codigo) != None:
+                self.tela_cursos.mostrar_mensagem('Já existe um curso com este código!')
+                return self.alterar_curso()
+            curso.codigo = novo_codigo
+            curso.nome = dados.get('novo_nome', curso.nome)
             # Retornando uma mensagem de sucesso para o usuário
             self.tela_cursos.mostrar_mensagem('Curso alterado')
         else:
