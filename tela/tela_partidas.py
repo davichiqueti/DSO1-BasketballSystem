@@ -56,7 +56,7 @@ class TelaPartidas(TelaBase):
             self.mostrar_mensagem('Os campos da data devem ser um números inteiros')
             return self.incluir_partida()
         else:
-            data = date(ano, mes, dia)
+            data = date(int(ano), int(mes), int(dia))
             if data > data_atual.date():
                 self.mostrar_mensagem('A data da partida não é inválida por ser posterior a data atual')
                 return self.incluir_partida()        

@@ -7,6 +7,7 @@ class ControladorPartidas:
         self.__partidas = list()
         self.__tela_partidas = TelaPartidas()
         self.__controlador_sistema = None
+        self.__ultimo_codigo_gerado = 0
 
     @property
     def partidas(self) -> list[Partida]:
@@ -45,7 +46,8 @@ class ControladorPartidas:
 
     def listar_partidas(self):
         if len(self.partidas) == 0:
-            return self.tela_partidas.mostrar_mensagem('Nenhuma partida cadastrada')
+            self.tela_partidas.mostrar_mensagem('Nenhuma partida registrada')
+            return
         dados_partidas = list()
         for partida in self.partidas:
             dados_partidas.append({
@@ -57,10 +59,33 @@ class ControladorPartidas:
         self.tela_partidas.listar_partidas(dados_partidas)
 
     def incluir_partida(self):
+        if len(self.controlador_sistema.controlador_equipes.equipes) < 2:
+            self.tela_partidas.mostrar_mensagem(
+                'Para registrar uma partida, o sistema deve ter ao mínimo 2 equipes cadastradas'
+            )
+            return
         dados = self.tela_partidas.incluir_partida()
-        nova_partida = Partida(dados, dados)
+        # Carregando dados
+        data = dados['data']
+        codigo_partida = self.__ultimo_codigo_gerado + 1
+        # Tratamento para as equipes da partida
+        codigo_equipe_1 = dados['codigo_equipe_1']
+        codigo_equipe_2 = dados['codigo_equipe_2']
+        indice_equipe_1 = self.controlador_sistema.controlador_equipes.pesquisar_equipe_por_codigo(codigo_equipe_1)
+        indice_equipe_2 = self.controlador_sistema.controlador_equipes.pesquisar_equipe_por_codigo(codigo_equipe_2)
+        if indice_equipe_1 is None:
+            self.tela_partidas.mostrar_mensagem(f'Equipe com código "{indice_equipe_1}" não encontrado')
+            return self.incluir_partida()
+        if indice_equipe_2 is None:
+            self.tela_partidas.mostrar_mensagem(f'Equipe com código "{codigo_equipe_2}" não encontrado')
+            return self.incluir_partida()
+        equipe_1 = self.controlador_sistema.controlador_equipes.equipes[indice_equipe_1]
+        equipe_2 = self.controlador_sistema.controlador_equipes.equipes[indice_equipe_1]
+        pontuacao = {equipe_1: dados['pontuacao_equipe_1'], equipe_2: dados['pontuacao_equipe_2']}
+        # Instanciando objeto e armazenando na lista
+        nova_partida = Partida(codigo_partida, data, equipes=[equipe_1, equipe_2], pontuacao=pontuacao)
         self.partidas.append(nova_partida)
-        self.tela_partidas.mostrar_mensagem('Curso cadastrado com sucesso')
+        self.tela_partidas.mostrar_mensagem('Partida registrada com sucesso')
 
     def pesquisar_partida_por_codigo(self, codigo: int) -> int:
         """
