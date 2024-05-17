@@ -1,6 +1,7 @@
 from controle.controlador_sistema import ControladorSistema
 from controle.controlador_cursos import ControladorCursos
 from controle.controlador_equipes import ControladorEquipes
+from controle.controlador_partidas import ControladorPartidas
 
 
 controlador_sistema = ControladorSistema()
@@ -13,6 +14,10 @@ controlador_cursos.controlador_sistema = controlador_sistema
 controlador_equipes = ControladorEquipes()
 controlador_sistema.controlador_equipes = controlador_equipes
 controlador_equipes.controlador_sistema = controlador_sistema
+# Entidade Partida
+controlador_partidas = ControladorPartidas()
+controlador_sistema.controlador_partidas = controlador_partidas
+controlador_partidas.controlador_sistema = controlador_sistema
 # Entidade $ENTIDADE
 # controlador_$ENTIDADE = Controlador#ENTIDADES()
 # controlador_sistema.controlador_$ENTIDADE = controlador_$ENTIDADE

@@ -8,7 +8,7 @@ class Partida:
         self,
         codigo: int,
         data: date,
-        arbitro: Arbitro,
+        #arbitro: Arbitro,
         equipes: list[Equipe],
         pontuacao: dict = {},
     ):
