@@ -1,13 +1,13 @@
 from entidade.arbitro import Arbitro
 from entidade.equipe import Equipe
-from datetime import date
+from datetime import datetime
 
 
 class Partida:
     def __init__(
         self,
         codigo: int,
-        data: date,
+        data: datetime,
         #arbitro: Arbitro,
         equipes: list[Equipe],
         pontuacao: dict = {},
@@ -16,7 +16,7 @@ class Partida:
             self.__codigo = codigo
         else:
             raise TypeError('Partida.codigo deve ser do tipo "int"')
-        if isinstance(data, date):
+        if isinstance(data, datetime):
             self.__data = data
         else:
             raise TypeError('Partida.data deve ser do tipo "Date"')
@@ -43,18 +43,18 @@ class Partida:
             raise TypeError('Partida.codigo deve ser do tipo "int"')
 
     @property
-    def data(self) -> date:
+    def data(self) -> datetime:
         return self.__data
 
     @data.setter
-    def data(self, data: date):
-        if isinstance(data, date):
+    def data(self, data: datetime):
+        if isinstance(data, datetime):
             self.__data = data
         else:
             raise TypeError('Partida.data deve ser do tipo "Date"')
 
     @property
-    def pontuacao(self) -> dict:
+    def pontuacao(self) -> dict[Equipe, int]:
         return self.__pontuacao
 
     @pontuacao.setter

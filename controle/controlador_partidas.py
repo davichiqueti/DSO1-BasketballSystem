@@ -50,12 +50,14 @@ class ControladorPartidas:
             return
         dados_partidas = list()
         for partida in self.partidas:
-            dados_partidas.append({
+            dados_partida = {
                 'codigo': partida.codigo,
                 'data': partida.data,
-                'pontuacao': partida.pontuacao,
-                'equipes': partida.equipes
-            })
+                'pontuacao_equipes': {
+                    equipe.nome: pontuacao for equipe, pontuacao in partida.pontuacao.items()
+                }
+            }
+            dados_partidas.append(dados_partida)
         self.tela_partidas.listar_partidas(dados_partidas)
 
     def incluir_partida(self):

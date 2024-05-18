@@ -21,7 +21,10 @@ class TelaPartidas(TelaBase):
         for partida in dados_partidas:
             codigo = partida["codigo"]
             data = partida["data"]
-            print(f"- CÓDIGO: {codigo} DATA: {data}")
+            print(f"- CÓDIGO: {codigo} DATA: {data.strftime('%d/%m/%Y')}")
+            print(f"- PONTUAÇÕES:")
+            for equipe, pontuacao in partida['pontuacao_equipes']:
+                print(f"\t- EQUIPE {equipe}: {pontuacao}")
         print('\n')
         self.esperar_resposta()
 
@@ -56,7 +59,7 @@ class TelaPartidas(TelaBase):
             self.mostrar_mensagem('Os campos da data devem ser um números inteiros')
             return self.incluir_partida()
         else:
-            data = date(int(ano), int(mes), int(dia))
+            data = datetime(year=int(ano), month=int(mes), day=int(dia))
             if data > data_atual.date():
                 self.mostrar_mensagem('A data da partida não é inválida por ser posterior a data atual')
                 return self.incluir_partida()        
