@@ -53,9 +53,8 @@ class ControladorPartidas:
             dados_partida = {
                 'codigo': partida.codigo,
                 'data': partida.data,
-                'pontuacao_equipes': {
-                    equipe.nome: pontuacao for equipe, pontuacao in partida.pontuacao.items()
-                }
+                'arbitro': {'nome': partida.arbitro.nome, 'cpf': partida.arbitro.cpf},
+                'pontuacao_equipes': {equipe.nome: pontuacao for equipe, pontuacao in partida.pontuacao.items()}
             }
             dados_partidas.append(dados_partida)
         self.tela_partidas.listar_partidas(dados_partidas)
@@ -69,7 +68,12 @@ class ControladorPartidas:
         dados = self.tela_partidas.incluir_partida()
         # Carregando dados
         data = dados['data']
-        codigo_partida = self.__ultimo_codigo_gerado + 1
+        # Tratamento para o arbitro
+        cpf_arbitro = dados['cpf_arbitro']
+        arbitro = self.controlador_sistema.controlador_arbitros.pesquisar_arbitros_por_cpf(cpf_arbitro)
+        if arbitro is None:
+            self.tela_partidas.mostrar_mensagem(f'Arbitro com cpf "{cpf_arbitro}" não encontrado')
+            return self.incluir_partida()
         # Tratamento para as equipes da partida
         codigo_equipe_1 = dados['codigo_equipe_1']
         codigo_equipe_2 = dados['codigo_equipe_2']
@@ -82,10 +86,21 @@ class ControladorPartidas:
             self.tela_partidas.mostrar_mensagem(f'Equipe com código "{codigo_equipe_2}" não encontrado')
             return self.incluir_partida()
         equipe_1 = self.controlador_sistema.controlador_equipes.equipes[indice_equipe_1]
-        equipe_2 = self.controlador_sistema.controlador_equipes.equipes[indice_equipe_1]
-        pontuacao = {equipe_1: dados['pontuacao_equipe_1'], equipe_2: dados['pontuacao_equipe_2']}
+        equipe_2 = self.controlador_sistema.controlador_equipes.equipes[indice_equipe_2]
+        dados_alunos_equipe_1 = [{'nome': aluno.nome, 'matricula': aluno.matricula} for aluno in equipe_1.alunos]
+        dados_alunos_equipe_2 = [{'nome': aluno.nome, 'matricula': aluno.matricula} for aluno in equipe_2.alunos]
+        pontuacao_equipe_1 = self.tela_partidas.alterar_pontuacao_equipe(equipe_1.nome, dados_alunos_equipe_1)
+        pontuacao_equipe_2 = self.tela_partidas.alterar_pontuacao_equipe(equipe_2.nome, dados_alunos_equipe_2)
+        pontuacao = {equipe_1: pontuacao_equipe_1, equipe_2: pontuacao_equipe_2}
         # Instanciando objeto e armazenando na lista
-        nova_partida = Partida(codigo_partida, data, equipes=[equipe_1, equipe_2], pontuacao=pontuacao)
+        self.__ultimo_codigo_gerado += 1
+        nova_partida = Partida(
+            codigo=self.__ultimo_codigo_gerado,
+            data=data,
+            arbitro=arbitro,
+            equipes=[equipe_1, equipe_2],
+            pontuacao=pontuacao
+        )
         self.partidas.append(nova_partida)
         self.tela_partidas.mostrar_mensagem('Partida registrada com sucesso')
 

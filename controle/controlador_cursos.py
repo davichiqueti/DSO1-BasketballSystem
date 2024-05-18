@@ -12,6 +12,10 @@ class ControladorCursos:
     def cursos(self) -> list[Curso]:
         return self.__cursos
 
+    @cursos.setter
+    def cursos(self, cursos) -> list[Curso]:
+        self.__cursos = cursos
+
     @property
     def tela_cursos(self) -> TelaCursos:
         return self.__tela_cursos
@@ -122,10 +126,11 @@ class ControladorCursos:
         if confirmacao:
             # Atualizando dados do curso que foram retornados pela interface
             novo_codigo = dados.get('novo_codigo')
-            if novo_codigo != codigo_antigo and self.pesquisar_curso_por_codigo(novo_codigo) != None:
-                self.tela_cursos.mostrar_mensagem('Já existe um curso com este código!')
-                return self.alterar_curso()
-            curso.codigo = novo_codigo
+            if novo_codigo is not None:
+                if novo_codigo != codigo_antigo and self.pesquisar_curso_por_codigo(novo_codigo) != None:
+                    self.tela_cursos.mostrar_mensagem('Já existe um curso com este código!')
+                    return self.alterar_curso()
+                curso.codigo = novo_codigo
             curso.nome = dados.get('novo_nome', curso.nome)
             # Retornando uma mensagem de sucesso para o usuário
             self.tela_cursos.mostrar_mensagem('Curso alterado')

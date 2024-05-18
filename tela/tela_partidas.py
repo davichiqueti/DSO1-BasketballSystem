@@ -21,10 +21,17 @@ class TelaPartidas(TelaBase):
         for partida in dados_partidas:
             codigo = partida["codigo"]
             data = partida["data"]
-            print(f"- CÓDIGO: {codigo} DATA: {data.strftime('%d/%m/%Y')}")
-            print(f"- PONTUAÇÕES:")
-            for equipe, pontuacao in partida['pontuacao_equipes']:
-                print(f"\t- EQUIPE {equipe}: {pontuacao}")
+            arbitro = partida['arbitro']
+            print(f"Data Partida: {data.strftime('%d/%m/%Y')}   Código: {codigo}")
+            print(f"Árbitro: {arbitro['nome']} ({arbitro['cpf']})")
+            print(f"PONTUAÇÕES:")
+            for equipe, pontuacao in partida['pontuacao_equipes'].items():
+                print(f"\n- EQUIPE {equipe}")
+                total = 0
+                for pontuacao_aluno in pontuacao:
+                    print(f'\t- {pontuacao_aluno['nome']} ({pontuacao_aluno['matricula']}): {pontuacao_aluno['pontos']}')
+                    total += pontuacao_aluno['pontos']
+                print(f"- TOTAL EQUIPE {equipe}: {total}")
         print('\n')
         self.esperar_resposta()
 
@@ -34,21 +41,13 @@ class TelaPartidas(TelaBase):
         # Tratamento das equipes
         codigo_equipe_1 = input('Código da Equipe 1: ').strip()
         codigo_equipe_2= input('Código da Equipe 2: ').strip()
-        pontuacao_equipe_1 = input('Pontuação da Equipe 1: ').strip()
-        pontuacao_equipe_2 = input('Pontuação da Equipe 2: ').strip()
-        if not (
-            codigo_equipe_1.isnumeric()
-            and pontuacao_equipe_1.isnumeric()
-            and codigo_equipe_2.isnumeric()
-            and pontuacao_equipe_2.isnumeric()
-        ):
-            self.mostrar_mensagem('O código das Equipes e suas pontuações devem ser valores númericos')
+        if not (codigo_equipe_1.isnumeric() and codigo_equipe_2.isnumeric()):
+            self.mostrar_mensagem('O código das Equipes devem ser valores númericos')
             return self.incluir_partida()
-        if (int(pontuacao_equipe_1) < 0 and int(pontuacao_equipe_2) < 0):
-            self.mostrar_mensagem('A pontuação das Equipes deve ser maior do que zero')
-            return self.incluir_partida()
-        if not (codigo_equipe_2.isnumeric() and pontuacao_equipe_2.isnumeric()):
-            self.mostrar_mensagem('O código da Equipe e a sua pontuação devem ser valores númericos')
+        # Tratamento do arbitro
+        cpf_arbitro = input('CPF do árbitro (Apenas números): ').strip()
+        if not (cpf_arbitro.isnumeric() and len(cpf_arbitro) == 11):
+            self.mostrar_mensagem('O código do Árbitro deve ser númerico com 11 dígitos sem caracteres separadores')
             return self.incluir_partida()
         # Tratamento da data da partida
         data_atual = datetime.now()
@@ -60,13 +59,23 @@ class TelaPartidas(TelaBase):
             return self.incluir_partida()
         else:
             data = datetime(year=int(ano), month=int(mes), day=int(dia))
-            if data > data_atual.date():
+            if data > data_atual:
                 self.mostrar_mensagem('A data da partida não é inválida por ser posterior a data atual')
                 return self.incluir_partida()        
         return {
             'data': data,
+            'cpf_arbitro': cpf_arbitro,
             'codigo_equipe_1': int(codigo_equipe_1),
-            'pontuacao_equipe_1': int(pontuacao_equipe_1),
-            'codigo_equipe_2': int(codigo_equipe_2),
-            'pontuacao_equipe_2': int(pontuacao_equipe_2)
+            'codigo_equipe_2': int(codigo_equipe_2)
         }
+
+    def alterar_pontuacao_equipe(self, nome_equipe, dados_alunos: list[dict]) -> dict:
+        print(f'\nPontuação Equipe "{nome_equipe}"')
+        for aluno in dados_alunos:
+            pontos_aluno = input(f'- Pontos de {aluno['nome']} ({aluno['matricula']}): ')
+            if not pontos_aluno.isnumeric() or int(pontos_aluno) < 0:
+                self.mostrar_mensagem('A pontuação dos alunos deve ser um número inteiro igual ou maior do que 0')
+                return self.incluir_partida()
+            else:
+                aluno['pontos'] = int(pontos_aluno)
+        return dados_alunos

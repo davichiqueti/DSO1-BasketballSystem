@@ -8,7 +8,7 @@ class Partida:
         self,
         codigo: int,
         data: datetime,
-        #arbitro: Arbitro,
+        arbitro: Arbitro,
         equipes: list[Equipe],
         pontuacao: dict = {},
     ):
@@ -20,6 +20,11 @@ class Partida:
             self.__data = data
         else:
             raise TypeError('Partida.data deve ser do tipo "Date"')
+        # Tramento para arbitro
+        if isinstance(arbitro, Arbitro):
+            self.__arbitro = arbitro
+        else:
+            raise TypeError('Partida.arbitro deve ser do tipo "Arbitro"')
         # Tratamento para a lista de equipes da partida
         if isinstance(equipes, list):
             self.__equipes = equipes
@@ -52,6 +57,17 @@ class Partida:
             self.__data = data
         else:
             raise TypeError('Partida.data deve ser do tipo "Date"')
+
+    @property
+    def arbitro(self) -> Arbitro:
+        return self.__arbitro
+
+    @arbitro.setter
+    def arbitro(self, arbitro: Arbitro) -> Arbitro:
+        if isinstance(arbitro, Arbitro):
+            self.__arbitro = arbitro
+        else:
+            raise TypeError('Partida.arbitro deve ser do tipo "Arbitro"')
 
     @property
     def pontuacao(self) -> dict[Equipe, int]:
