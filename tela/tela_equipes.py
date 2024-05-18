@@ -25,25 +25,43 @@ class TelaEquipes(TelaBase):
         print('\n')
         self.esperar_resposta()
 
-    def incluir_equipe(self) -> dict:
+    def incluir_equipe(self, minimo_de_membros: int) -> dict:
         self.limpar_tela()
         print('--- CADASTRO DE EQUIPE ---\n')
         nome = input('Nome da equipe: ')
         if not (2 <= len(nome) <= 60):
             self.mostrar_mensagem('O nome da equipe deve ter entre 2 a 60 caracteres')
             return self.incluir_equipe()
-        codigo = input('Código da equipe: ')
+        codigo = input('Código da equipe: ').strip()
         if not codigo.isnumeric():
             self.mostrar_mensagem('O código deve ser um número inteiro')
             return self.incluir_equipe()
-        codigo_curso = input('Código do curso: ')
+        codigo_curso = input('Código do curso: ').strip()
         if not codigo.isnumeric():
             self.mostrar_mensagem('Só existem cadastros de curso com códigos númericos')
             return self.incluir_equipe()
+        # Tratamento para os alunos das equipes
+        print(f'ALUNOS DA EQUIPE (Ao menos {minimo_de_membros})')
+        codigos_alunos = list()
+        while True:
+            codigo_aluno = input(f'Código do {len(codigos_alunos) + 1}° aluno: ').strip()
+            if not codigo_aluno.isnumeric():
+                self.mostrar_mensagem('Só existem cadastros de alunos com códigos númericos')
+            codigo_aluno = int(codigo_aluno)
+            if codigo_aluno in codigos_alunos:
+                self.mostrar_mensagem('Este código de aluno já foi inserido na lista')
+            codigos_alunos.append(codigo_aluno)
+            if len(codigos_alunos) == 5:
+                self.mostrar_mensagem('Mínimo de membros alcançado')
+            if len(codigos_alunos) >= minimo_de_membros:
+                cadastro_adicional = self.confirmar_acao('Cadastrar um membro adicional?')
+                if not cadastro_adicional:
+                    break
         return {
             'nome': nome.upper(),
             'codigo': int(codigo),
-            'codigo_curso': int(codigo_curso)
+            'codigo_curso': int(codigo_curso),
+            'codigos_alunos': codigos_alunos
         }
 
     def excluir_equipe(self) -> int:

@@ -2,6 +2,8 @@ from entidade.equipe import Equipe
 from tela.tela_equipes import TelaEquipes
 
 
+MINIMO_DE_MEMBROS_EQUIPE = 1
+
 class ControladorEquipes:
     def __init__(self):
         self.__equipes = list()
@@ -25,6 +27,12 @@ class ControladorEquipes:
         self.__controlador_sistema = controlador_sistema
 
     def mostrar_opcoes(self):
+        condicao_para_uso_1 = (len(self.controlador_sistema.controlador_cursos.cursos) > 0)
+        condicao_para_uso_2 = (len(self.controlador_sistema.controlador_alunos.alunos) >= MINIMO_DE_MEMBROS_EQUIPE)
+        if not (condicao_para_uso_1 and condicao_para_uso_2):
+            return self.tela_equipes.mostrar_mensagem(
+                f'Ao menos 1 curso e {MINIMO_DE_MEMBROS_EQUIPE} alunos cadastrados são necessários para utilizar o módulo de equipes'
+            )
         opcoes = {
             '1': 'Listar Equipes',
             '2': 'Incluir Equipe',
@@ -55,25 +63,49 @@ class ControladorEquipes:
             })
         self.tela_equipes.listar_equipes(dados_equipes)
 
-    def incluir_equipe(self):
-        dados = self.tela_equipes.incluir_equipe()
+    def incluir_equipe(self) -> bool:
+        dados = self.tela_equipes.incluir_equipe(MINIMO_DE_MEMBROS_EQUIPE)
         nome = dados['nome']
         codigo = dados['codigo']
         codigo_curso = dados['codigo_curso']
         # Verificando duplicidade de códigos
         if self.pesquisar_equipe_por_codigo(codigo) != None:
-            self.tela_equipes.mostrar_mensagem(
-                'Uma equipe com este código já existe!')
-            return self.incluir_equipe()
+            self.tela_equipes.mostrar_mensagem('Uma equipe com este código já existe!')
+            return False
+        # Verificando existencia do curso
         indice_curso = self.controlador_sistema.controlador_cursos.pesquisar_curso_por_codigo(codigo_curso)
         if indice_curso == None:
-            self.tela_equipes.mostrar_mensagem(
-                'Não existe curso com este código!')
-            return self.incluir_equipe()
+            self.tela_equipes.mostrar_mensagem('Não existe curso com este código!')
+            return False
         curso = self.controlador_sistema.controlador_cursos.cursos[indice_curso]
-        nova_equipe = Equipe(nome, curso, codigo, list())
+        # Tratamento para os alunos
+        alunos = list()
+        for matricula in dados['codigos_alunos']:
+            # Verificando se o aluno está cadastrado
+            indice_aluno = self.controlador_sistema.controlador_alunos.pesquisar_aluno_por_matricula(matricula)
+            if indice_aluno is None:
+                self.tela_equipes.mostrar_mensagem(f'Não existe aluno de com matrícula "{matricula}"!')
+                return False
+            # Verificando se o aluno já faz parte de uma equipe
+            aluno = self.controlador_sistema.controlador_alunos.alunos[indice_aluno]
+            for equipe in self.equipes:
+                if aluno in equipe.alunos:
+                    confirmacao_alterar_equipe = self.tela_equipes.confirmar_acao(
+                        f'O aluno {aluno.nome} de mátricula {matricula} já faz parte da equipe {equipe.nome}\nAltualizar a equipe do aluno para equipe atual?'
+                    )
+                    if confirmacao_alterar_equipe:
+                        equipe.alunos.remove(aluno)
+                        alunos.append(aluno)
+                    break
+            else:
+                alunos.append(aluno)
+        if alunos < MINIMO_DE_MEMBROS_EQUIPE:
+            self.tela_equipes.mostrar_mensagem(f'Cadastro da equipe cancelado. Número de alunos menor que {MINIMO_DE_MEMBROS_EQUIPE}')
+        # Cadastrando a equipe
+        nova_equipe = Equipe(nome, curso, codigo, alunos)
         self.equipes.append(nova_equipe)
         self.tela_equipes.mostrar_mensagem('Equipe cadastrada com sucesso')
+        return True
 
     def excluir_equipe(self):
         if len(self.equipes) == 0:
