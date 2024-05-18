@@ -62,9 +62,27 @@ class ControladorCursos:
         if self.pesquisar_curso_por_codigo(codigo) != None:
             self.tela_cursos.mostrar_mensagem('Um curso com este código já existe!')
             return self.incluir_curso()
+        # Verificando duplicidade de nomes
+        for curso in self.cursos:
+            if curso.nome == nome:
+                self.tela_cursos.mostrar_mensagem('Um curso com este nome já existe!')
+                return self.incluir_curso()
         novo_curso = Curso(codigo, nome)
         self.cursos.append(novo_curso)
-        self.tela_cursos.mostrar_mensagem('Curso cadastrado com sucesso')
+        self.tela_cursos.mostrar_mensagem('Para concluir o cadastro, cadastre uma equipe com o código deste curso')
+        while True:
+            self.controlador_sistema.controlador_equipes.incluir_equipe()
+            nova_equipe = self.controlador_sistema.controlador_equipes.equipes[-1]
+            if nova_equipe.curso == novo_curso:
+                self.tela_cursos.mostrar_mensagem('Curso cadastrado com sucesso')
+                break
+            else:
+                self.tela_cursos.mostrar_mensagem('A equipe cadastrada possui outro curso')
+                confirmacao = self.tela_cursos.confirmar_acao('Tentar cadastrar Equipe novamente?')
+                if not confirmacao:
+                    del self.cursos[-1]
+                    self.tela_cursos.mostrar_mensagem('Cadastro do curso cancelado')
+                    break
 
     def excluir_curso(self):
         if len(self.cursos) == 0:

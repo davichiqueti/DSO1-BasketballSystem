@@ -37,7 +37,7 @@ class TelaCursos(TelaBase):
             return self.incluir_curso()
         return {
             'codigo': int(codigo),
-            'nome': nome.upper()
+            'nome': nome.upper().strip()
         }
 
     def excluir_curso(self) -> int:
