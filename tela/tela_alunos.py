@@ -163,6 +163,3 @@ class TelaAlunos(TelaBase):
         self.__controlador_alunos.listar_aluno()
         self.mostrar_mensagem("Alunos Listados!")
         time.sleep(3)
-
-
-
