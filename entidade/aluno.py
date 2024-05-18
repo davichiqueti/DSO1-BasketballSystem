@@ -3,7 +3,8 @@ from entidade.pessoa import Pessoa
 from datetime import date
 
 class Aluno(Pessoa):
-    def __init__(self,
+    def __init__(
+                 self,
                  nome: str,
                  cpf: str,
                  data_nascimento: date,
