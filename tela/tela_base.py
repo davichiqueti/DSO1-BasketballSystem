@@ -30,3 +30,11 @@ class TelaBase(ABC):
         else:
             print('\n[Mensagem do Sistema]: Resposta inválida')
             return self.confirmar_acao(mensagem)
+
+    def verificar_string_alpha(self, variavel) -> bool:
+        if isinstance(variavel, str):
+            variavel = variavel.split()
+            for caracter in variavel:
+                if not caracter.isalpha():
+                    return False
+            return True
