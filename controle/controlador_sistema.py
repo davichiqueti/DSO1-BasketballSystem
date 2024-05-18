@@ -2,6 +2,7 @@ from tela.tela_sistema import TelaSistema
 from controle.controlador_cursos import ControladorCursos
 from controle.controlador_equipes import ControladorEquipes
 from controle.controlador_arbitros import ControladorArbitros
+from controle.controlador_alunos import ControladorAlunos
 from controle.controlador_partidas import ControladorPartidas
 
 
@@ -11,6 +12,7 @@ class ControladorSistema:
         self.__controlador_cursos = None
         self.__controlador_equipes = None
         self.__controlador_arbitros = None
+        self.__controlador_alunos = None
         self.__controlador_partidas = None
 
     @property
@@ -65,12 +67,35 @@ class ControladorSistema:
         else:
             raise TypeError('ControladorSistema.controlador_partidas deve ser do tipo "ControladorPartidas"')
 
+    @property
+    def controlador_alunos(self):
+        return self.__controlador_alunos
+
+    @controlador_alunos.setter
+    def controlador_alunos(self, controlador_alunos: ControladorAlunos):
+        if isinstance(controlador_alunos, ControladorAlunos):
+            self.__controlador_alunos = controlador_alunos
+        else:
+            raise TypeError("ControladorSistema.__controlador_alunos deve ser do tipo 'ControladorAlunos'.")
+
+    @property
+    def controlador_alunos(self):
+        return self.__controlador_alunos
+
+    @controlador_alunos.setter
+    def controlador_alunos(self, controlador_alunos: ControladorAlunos):
+        if isinstance(controlador_alunos, ControladorAlunos):
+            self.__controlador_alunos = controlador_alunos
+        else:
+            raise TypeError("ControladorSistema.__controlador_alunos deve ser do tipo 'ControladorAlunos'.")
+
     def mostrar_opcoes(self):
         opcoes = {
             '1': 'Módulo de Cursos',
             '2': 'Módulo de Equipes',
-            '3': 'Módulo de Partidas',
-            '4': 'Módulo de Arbitros',
+            '3': 'Módulo de Arbitros',
+            '4': 'Módulo de Alunos',
+            '5': 'Módulo de Partidas',
             '10': 'Sair'
         }
         opcao_escolhida = str()
@@ -79,7 +104,8 @@ class ControladorSistema:
             match opcao_escolhida:
                 case '1': self.controlador_cursos.mostrar_opcoes()
                 case '2': self.controlador_equipes.mostrar_opcoes()
-                case '3': self.controlador_partidas.mostrar_opcoes()
-                case '4': self.controlador_arbitros.mostrar_opcoes()
+                case '3': self.controlador_arbitros.mostrar_opcoes()
+                case '4': self.controlador_alunos.mostrar_opcoes()
+                case '5': self.controlador_partidas.mostrar_opcoes()
                 case '10': break
                 case _: self.tela_sistema.mostrar_mensagem('Opção Escolhida Não Existe')
