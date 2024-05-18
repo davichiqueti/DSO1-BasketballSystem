@@ -38,6 +38,3 @@ class Endereco:
     @bairro.setter
     def bairro(self, bairro: str):
         self.__bairro = bairro
-
-    
-

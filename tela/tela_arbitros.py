@@ -120,9 +120,3 @@ class TelaArbitros(TelaBase):
             print(f"Número de partidas: {numero_partidas}")
             print()
         self.esperar_resposta()
-    
-
-
-        
-
-
