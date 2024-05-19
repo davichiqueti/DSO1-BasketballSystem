@@ -4,6 +4,7 @@ from controle.controlador_equipes import ControladorEquipes
 from controle.controlador_partidas import ControladorPartidas
 from controle.controlador_arbitros import ControladorArbitros
 from controle.controlador_alunos import ControladorAlunos
+from controle.controlador_campeonatos import ControladorCampeonatos
 
 
 controlador_sistema = ControladorSistema()
@@ -32,6 +33,12 @@ controlador_arbitros.controlador_sistema = controlador_sistema
 controlador_alunos = ControladorAlunos()
 controlador_sistema.controlador_alunos = controlador_alunos
 controlador_alunos.controlador_sistema = controlador_sistema
+
+#Entidade Campeonato
+controlador_campeonatos = ControladorCampeonatos()
+controlador_sistema.controlador_campeonatos = controlador_campeonatos
+controlador_campeonatos.controlador_sistema = controlador_sistema
+
 # Entidade $ENTIDADE
 # controlador_$ENTIDADE = Controlador#ENTIDADES()
 # controlador_sistema.controlador_$ENTIDADE = controlador_$ENTIDADE
