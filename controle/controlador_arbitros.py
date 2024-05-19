@@ -57,9 +57,13 @@ class ControladorArbitros:
 
     def incluir_arbitro(self):
         info_arbitro = self.__tela_arbitros.incluir_arbitro()
-        novo_arbitro = Arbitro(info_arbitro['Nome'], info_arbitro['CPF'],
-                               info_arbitro["Data de nascimento"], info_arbitro['Bairro'],
-                               info_arbitro['Cidade'], info_arbitro['Estado'], info_arbitro["Numero de partidas"]
+        novo_arbitro = Arbitro(info_arbitro['Nome'], 
+                                info_arbitro['CPF'],
+                                info_arbitro["Data de nascimento"], 
+                                info_arbitro['Estado'], 
+                                info_arbitro['Cidade'],
+                                info_arbitro['Bairro'],
+                                info_arbitro["Numero de partidas"]
                                )
         for arbitro_cadastrado in self.__arbitros:
             if arbitro_cadastrado.cpf == novo_arbitro.cpf:
@@ -67,8 +71,8 @@ class ControladorArbitros:
                 return self.incluir_arbitro()
 
         self.__arbitros.append(novo_arbitro)
-        self.__tela_arbitros.mostrar_mensagem("Novo arbitro adicionado!")
-        return self.mostrar_opcoes()
+        return self.__tela_arbitros.mostrar_mensagem("Novo arbitro adicionado!")
+        
         
 
     def alterar_arbitro(self):
@@ -84,30 +88,34 @@ class ControladorArbitros:
                 arbitro.nome = dados_arbitro_alteracao["Nome"]
                 arbitro.cpf = dados_arbitro_alteracao["CPF"]
                 arbitro.data_nascimento = dados_arbitro_alteracao["Data de nascimento"]
-                arbitro.bairro = dados_arbitro_alteracao["Bairro"]
-                arbitro.cidade = dados_arbitro_alteracao["Cidade"]
                 arbitro.estado = dados_arbitro_alteracao["Estado"]
+                arbitro.cidade = dados_arbitro_alteracao["Cidade"]
+                arbitro.bairro = dados_arbitro_alteracao["Bairro"]
                 arbitro.numero_partidas = dados_arbitro_alteracao["Numero de Partidas"]
-                self.limpar_tela()
+                self.tela_arbitros.limpar_tela()
                 return self.tela_arbitros.mostrar_mensagem("Cadastro do arbitro alterado.")
             else:
-                self.limpar_tela()
+                self.tela_arbitros.limpar_tela()
                 self.tela_arbitros.mostrar_mensagem("CPF informado não corresponde a nenhum arbitro.")
                 return self.tela_arbitros.alterar_arbitro()
         else:
             self.tela_arbitros.mostrar_mensagem("Arbitro não encontrado no sistema.")
             return self.tela_arbitros.alterar_arbitro()
 
+
+
     def excluir_arbitro(self):
         if len(self.__arbitros) != 0:
             info_arbitro = self.__tela_arbitros.excluir_arbitro()
             arbitro_exclusao = self.pesquisar_arbitros_por_cpf(info_arbitro)
-
-            if self.__tela_arbitros.confirmar_acao("Tem certeza que deseja excluir o arbitro?"):
-                self.__arbitros.remove(arbitro_exclusao)
-                return self.__tela_arbitros.mostrar_mensagem("Arbitro foi removido")
+            if arbitro_exclusao != None:
+                if self.__tela_arbitros.confirmar_acao("Tem certeza que deseja excluir o arbitro?"):
+                    self.__arbitros.remove(arbitro_exclusao)
+                    return self.__tela_arbitros.mostrar_mensagem("Arbitro foi removido")
+                else:
+                    return 
             else:
-                return
+                return self.__tela_arbitros.mostrar_mensagem("Arbitro não está cadastrado.")
         else:
             return self.tela_arbitros.mostrar_mensagem("Arbitro não está cadastrado.")
 
