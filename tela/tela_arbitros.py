@@ -35,18 +35,19 @@ class TelaArbitros(TelaBase):
             except ValueError:
                 print("formato de data informado está incorreto, por favor, informar no formato dd/mm/aaaa")
         estado = input("Estado: ")
-        bairro = input("Bairro: ")
         cidade = input("Cidade: ")
+        bairro = input("Bairro: ")
         numero_partidas = input("Número de partidas: ")
 
-        dados_arbitro_inclusao = {"Nome": nome,
-                "CPF": cpf,
-                "Data de nascimento": data_nascimento,
-                "Bairro": bairro,
-                "Cidade": cidade,
-                "Estado": estado,
-                "Numero de partidas": int(numero_partidas)
-                }
+        dados_arbitro_inclusao = {
+                                    "Nome": nome,
+                                    "CPF": cpf,
+                                    "Data de nascimento": data_nascimento,
+                                    "Estado": estado,
+                                    "Cidade": cidade,
+                                    "Bairro": bairro,
+                                    "Numero de partidas": int(numero_partidas)
+                                }
         return dados_arbitro_inclusao      
 
 
@@ -68,8 +69,8 @@ class TelaArbitros(TelaBase):
             nome = input("Nome: ")
             data_nascimento = input("Data de nascimento: ")
             estado = input("Estado: ")
-            bairro = input("Bairro: ")
             cidade = input("Cidade: ")
+            bairro = input("Bairro: ")
             numero_partidas = input("Numero de Partidas: ")  
 
 
@@ -78,9 +79,9 @@ class TelaArbitros(TelaBase):
                 "Nome" : nome,
                 "CPF" : cpf,
                 "Data de nascimento" : data_nascimento,
-                "Bairro" : bairro,
-                "Cidade" : cidade,
                 "Estado" : estado,
+                "Cidade" : cidade,
+                "Bairro" : bairro,
                 "Numero de Partidas" : numero_partidas
             }
             return dados_arbitro_alteracao
@@ -107,16 +108,16 @@ class TelaArbitros(TelaBase):
             nome = arbitro["Nome"]
             cpf = arbitro["CPF"]
             data_nascimento = arbitro["Data de Nascimento"]
-            bairro = arbitro["estado"]
+            estado = arbitro["estado"]
             cidade = arbitro["cidade"]
-            estado = arbitro["bairro"]
+            bairro = arbitro["bairro"]
             numero_partidas = arbitro["numero partidas"]
             print(f"Nome: {nome}")
             print(f"CPF: {cpf}")
             print(f"Data de nascimento: {data_nascimento}")
-            print(f"Bairro: {bairro}")
-            print(f"Cidade: {cidade}")
             print(f"Estado: {estado}")
+            print(f"Cidade: {cidade}")
+            print(f"Bairro: {bairro}")
             print(f"Número de partidas: {numero_partidas}")
             print()
         self.esperar_resposta()
