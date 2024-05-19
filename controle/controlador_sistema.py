@@ -4,6 +4,7 @@ from controle.controlador_equipes import ControladorEquipes
 from controle.controlador_arbitros import ControladorArbitros
 from controle.controlador_alunos import ControladorAlunos
 from controle.controlador_partidas import ControladorPartidas
+from controle.controlador_campeonatos import ControladorCampeonatos
 
 
 class ControladorSistema:
@@ -14,6 +15,7 @@ class ControladorSistema:
         self.__controlador_arbitros = None
         self.__controlador_alunos = None
         self.__controlador_partidas = None
+        self.__controlador_campeonatos = None
 
     @property
     def tela_sistema(self) -> TelaSistema:
@@ -89,6 +91,18 @@ class ControladorSistema:
         else:
             raise TypeError("ControladorSistema.__controlador_alunos deve ser do tipo 'ControladorAlunos'.")
 
+    @property
+    def controlador_campeonatos(self):
+        return self.__controlador_campeonatos
+
+    @controlador_campeonatos.setter
+    def controlador_campeonatos(self, controlador_campeonatos: ControladorCampeonatos):
+        if isinstance(controlador_campeonatos, ControladorCampeonatos):
+            self.__controlador_campeonatos = controlador_campeonatos
+        else:
+            raise TypeError("ControladorSistema.__controlador_campeonatos deve ser do tipo 'ControladorCampeonatos'.")
+
+
     def mostrar_opcoes(self):
         opcoes = {
             '1': 'Módulo de Cursos',
@@ -96,6 +110,7 @@ class ControladorSistema:
             '3': 'Módulo de Arbitros',
             '4': 'Módulo de Alunos',
             '5': 'Módulo de Partidas',
+            '6': 'Módulo de Campeonatos',
             '10': 'Sair'
         }
         opcao_escolhida = str()
@@ -107,5 +122,6 @@ class ControladorSistema:
                 case '3': self.controlador_arbitros.mostrar_opcoes()
                 case '4': self.controlador_alunos.mostrar_opcoes()
                 case '5': self.controlador_partidas.mostrar_opcoes()
+                case '6': self.controlador_campeonatos.mostrar_opcoes()
                 case '10': break
                 case _: self.tela_sistema.mostrar_mensagem('Opção Escolhida Não Existe')
