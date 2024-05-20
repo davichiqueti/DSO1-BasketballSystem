@@ -187,3 +187,40 @@ class TelaCampeonatos(TelaBase):
                 print(f"Equipe: {equipe_selecionada.nome}, {equipe_selecionada.codigo}")
                 print()
         self.esperar_resposta()
+
+    def selecionar_campeonato(self, dados_campeonatos: list[dict]) -> int:
+        print('Selecione um dos campeonatos abaixo')
+        codigos = set()
+        for campeonato in self.dados_campeonatos:
+            print(f'- {campeonato["nome"]} (Código {campeonato["codigo"]})')
+            codigos.add(campeonato['codigo'])
+        codigo = input('\nDigite o código do campeonato selecionado: ').strip()
+        if not codigo.isnumeric():
+            self.mostrar_mensagem('O código inserido não é númerico. Tente novamente')
+            return self.selecionar_campeonato(dados_campeonatos)
+        elif int(codigo) not in codigos:
+            self.mostrar_mensagem('O código inserido não pertence a nenhum dos campeonatos listados')
+            return self.selecionar_campeonato(dados_campeonatos)
+        else:
+            return int(codigo)
+
+    def exibir_relatorios_campeonato(self, dados_relatorios: dict):
+        self.limpar_tela()
+        print('--- RELÁTORIOS CAMPEONATO ---\n')
+        print(f'Campeonato {dados_relatorios["descricao_campeonato"]}')
+        # Exibindo as posições de cada equipe no campeonato
+        print("Pódio do campeonato:")
+        for i in range(len(dados_relatorios['podio'])):
+            equipe = dados_relatorios['podio'][i]
+            print(f'\t - {i}° Lugar: {equipe["nome"]}({equipe["codigo"]}) {equipe["pontos"]} Pontos')
+        self.esperar_resposta()
+        print('\nEquipes que mais marcaram pontos:')
+        for i in range(len(dados_relatorios['equipes_mais_pontos'])):
+            equipe = dados_relatorios['equipes_mais_pontos'][i]
+            print(f'\t - {i}° Lugar: {equipe["nome"]}({equipe["codigo"]}) {equipe["pontos"]} Pontos')
+        self.esperar_resposta()
+        print('\nJogadores que mais marcaram pontos:')
+        for i in range(len(dados_relatorios['alunos_mais_pontos'])):
+            jogador = dados_relatorios['alunos_mais_pontos'][i]
+            print(f'\t - {i}° Lugar: {jogador["nome"]}({jogador["codigo"]}) {jogador["pontos"]} Pontos')
+        self.mostrar_mensagem('Fim dos relátorios')

@@ -12,9 +12,8 @@ class ControladorCampeonatos:
 
 
     @property
-    def campeonatos(self):
+    def campeonatos(self) -> list[Campeonato]:
         return self.__campeonatos
-        
 
     @campeonatos.setter
     def campeonatos(self, campeonatos):
@@ -167,7 +166,36 @@ class ControladorCampeonatos:
             }
             dados_campeonatos.append(dados_campeonatos_dict)
         return self.tela_campeonatos.listar_campeonatos(dados_campeonatos)
-    
+
+    def exibir_relatorios_campeonato(self):
+        # Selecionando campeonato para exibir os relátorios
+        dados_campeonatos = [{'descricao': campeonato.descricao, 'codigo': campeonato.codigo} for campeonato in self.campeonatos]
+        codigo_campeonato = self.tela_campeonatos.selecionar_campeonato(dados_campeonatos)
+        indice_campeonato = self.pesquisar_campeonato_por_codigo(codigo_campeonato)
+        campeonato = self.campeonatos[indice_campeonato]
+        # Gerando relátorios do campeonato
+        podio_campeonato = [{"nome": equipe.nome, "codigo": equipe.codigo, "pontos": pontos} for equipe, pontos in campeonato.pontuacao.items()]
+        podio_campeonato = sorted(podio_campeonato, key=lambda x: x["pontos"], reverse=True)
+        pontos_totais_equipe = dict()
+        pontos_totais_jogador = dict()
+        for partida in campeonato.partidas:
+            for equipe, pontuacao in partida.pontuacao.items():
+                pontos_totais_equipe[equipe] = pontos_totais_equipe.get(equipe, 0) + pontuacao["total"]
+                for jogador, pontos in pontuacao['pontuacao_individual'].items():
+                    pontos_totais_jogador[jogador] = pontos_totais_jogador.get(jogador, 0) + pontos
+        pontos_totais_equipe = [{'nome': equipe.nome, 'codigo': equipe.codigo, 'pontos': pontos} for equipe, pontos in pontos_totais_equipe.items()]
+        pontos_totais_equipe = sorted(pontos_totais_equipe, key=lambda x: x["pontos"], reverse=True)[:5]
+        pontos_totais_jogador = [{'nome': jogador.nome, 'matricula': jogador.matricula, 'pontos': pontos} for jogador, pontos in pontos_totais_jogador.items()]
+        pontos_totais_jogador = sorted(pontos_totais_jogador, key=lambda x: x["pontos"], reverse=True)[:5]
+        # Retornando dados dos relátorios processados para a tela
+        dados_relatorios = {
+            'descricao_campeonato': campeonato.descricao,
+            'podio': podio_campeonato,
+            'equipes_mais_pontos': pontos_totais_equipe,
+            'alunos_mais_pontos': pontos_totais_jogador
+        }
+        self.tela_campeonatos.exibir_relatorios_campeonato(dados_relatorios)
+
     def pesquisar_campeonato_por_codigo(self, codigo: int) -> int:
         for i in range(len(self.__campeonatos)):
             campeonato = self.campeonato[i]
