@@ -25,7 +25,7 @@ class TelaEquipes(TelaBase):
         print('\n')
         self.esperar_resposta()
 
-    def incluir_equipe(self, minimo_de_membros: int) -> dict:
+    def incluir_equipe(self) -> dict:
         self.limpar_tela()
         print('--- CADASTRO DE EQUIPE ---\n')
         nome = input('Nome da equipe: ')
@@ -41,9 +41,9 @@ class TelaEquipes(TelaBase):
             self.mostrar_mensagem('Só existem cadastros de curso com códigos númericos')
             return self.incluir_equipe()
         # Tratamento para os alunos das equipes
-        print(f'ALUNOS DA EQUIPE (Ao menos {minimo_de_membros})')
+        adicionar_aluno = self.confirmar_acao('Adicionar alunos na equipe?')
         codigos_alunos = list()
-        while True:
+        while adicionar_aluno:
             codigo_aluno = input(f'Código do {len(codigos_alunos) + 1}° aluno: ').strip()
             if not codigo_aluno.isnumeric():
                 self.mostrar_mensagem('Só existem cadastros de alunos com códigos númericos')
@@ -51,12 +51,8 @@ class TelaEquipes(TelaBase):
             if codigo_aluno in codigos_alunos:
                 self.mostrar_mensagem('Este código de aluno já foi inserido na lista')
             codigos_alunos.append(codigo_aluno)
-            if len(codigos_alunos) == 5:
-                self.mostrar_mensagem('Mínimo de membros alcançado')
-            if len(codigos_alunos) >= minimo_de_membros:
-                cadastro_adicional = self.confirmar_acao('Cadastrar um membro adicional?')
-                if not cadastro_adicional:
-                    break
+            adicionar_aluno = self.confirmar_acao('Adicionar mais um aluno na equipe?')
+        
         return {
             'nome': nome.upper(),
             'codigo': int(codigo),

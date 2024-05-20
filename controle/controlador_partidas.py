@@ -77,16 +77,14 @@ class ControladorPartidas:
         # Tratamento para as equipes da partida
         codigo_equipe_1 = dados['codigo_equipe_1']
         codigo_equipe_2 = dados['codigo_equipe_2']
-        indice_equipe_1 = self.controlador_sistema.controlador_equipes.pesquisar_equipe_por_codigo(codigo_equipe_1)
-        indice_equipe_2 = self.controlador_sistema.controlador_equipes.pesquisar_equipe_por_codigo(codigo_equipe_2)
-        if indice_equipe_1 is None:
-            self.tela_partidas.mostrar_mensagem(f'Equipe com código "{indice_equipe_1}" não encontrado')
+        equipe_1 = self.controlador_sistema.controlador_equipes.pesquisar_equipe_por_codigo(codigo_equipe_1)
+        equipe_2 = self.controlador_sistema.controlador_equipes.pesquisar_equipe_por_codigo(codigo_equipe_2)
+        if equipe_1 is None:
+            self.tela_partidas.mostrar_mensagem(f'Equipe com código "{codigo_equipe_1}" não encontrado')
             return self.incluir_partida()
-        if indice_equipe_2 is None:
+        if equipe_2 is None:
             self.tela_partidas.mostrar_mensagem(f'Equipe com código "{codigo_equipe_2}" não encontrado')
             return self.incluir_partida()
-        equipe_1 = self.controlador_sistema.controlador_equipes.equipes[indice_equipe_1]
-        equipe_2 = self.controlador_sistema.controlador_equipes.equipes[indice_equipe_2]
         dados_alunos_equipe_1 = [{'nome': aluno.nome, 'matricula': aluno.matricula} for aluno in equipe_1.alunos]
         dados_alunos_equipe_2 = [{'nome': aluno.nome, 'matricula': aluno.matricula} for aluno in equipe_2.alunos]
         pontuacao_equipe_1 = self.tela_partidas.alterar_pontuacao_equipe(equipe_1.nome, dados_alunos_equipe_1)
