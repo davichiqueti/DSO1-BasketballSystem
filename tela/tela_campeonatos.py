@@ -165,7 +165,7 @@ class TelaCampeonatos(TelaBase):
 
         return codigo_campeonato_exclusao
 
-    def listar_campeonatos(self, dados_campeonatos: list[Campeonato]):
+    def listar_campeonatos(self, dados_campeonatos):
         self.limpar_tela()
         print('-------- Listagem de Campeonatos --------')
         for campeonato in dados_campeonatos:
