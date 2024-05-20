@@ -99,7 +99,7 @@ class ControladorArbitros:
                 self.tela_arbitros.mostrar_mensagem("CPF informado não corresponde a nenhum arbitro.")
                 return self.tela_arbitros.alterar_arbitro()
         else:
-            self.tela_arbitros.mostrar_mensagem("Arbitro não encontrado no sistema.")
+            self.tela_arbitros.mostrar_mensagem("Nenhum arbitro cadastrado no sistema.")
             return self.tela_arbitros.alterar_arbitro()
 
 
@@ -125,7 +125,8 @@ class ControladorArbitros:
         if len(self.__arbitros) == 0:
             return self.tela_arbitros.mostrar_mensagem("\nAinda não temos arbitros cadastrados.\n")
         dados_arbitros = list()
-        for arbitro in self.arbitros:
+        for arbitro in self.__arbitros:
+            dados_arbitros_dict = dict()
             dados_arbitros_dict = {
                 "Nome": arbitro.nome,
                 "CPF": arbitro.cpf,
