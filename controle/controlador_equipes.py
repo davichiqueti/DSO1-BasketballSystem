@@ -160,5 +160,5 @@ class ControladorEquipes:
         Se nenhuma equipe possuir o código informado retorna `None`
         """
         for equipe in self.equipes:
-            if equipe == codigo:
+            if equipe.codigo == codigo:
                 return equipe

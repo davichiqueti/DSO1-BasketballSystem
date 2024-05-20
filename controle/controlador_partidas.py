@@ -26,6 +26,14 @@ class ControladorPartidas:
     def controlador_sistema(self, controlador_sistema):
         self.__controlador_sistema = controlador_sistema
 
+    @property
+    def ultimo_codigo_gerado(self) -> int:
+        return self.__ultimo_codigo_gerado
+
+    @ultimo_codigo_gerado.setter
+    def ultimo_codigo_gerado(self) -> int:
+        return self.__ultimo_codigo_gerado
+
     def mostrar_opcoes(self):
         opcoes = {
             '1': 'Listar Partidas',
@@ -39,8 +47,7 @@ class ControladorPartidas:
             match opcao_escolhida:
                 case '1': self.listar_partidas()
                 case '2': self.incluir_partida()
-                case '3': self.alterar_partida()
-                case '4': self.excluir_partida()
+                case '3': self.excluir_partida()
                 case '10': break
                 case _: self.tela_partidas.mostrar_mensagem('Opção Escolhida Não Existe')
 
@@ -54,7 +61,10 @@ class ControladorPartidas:
                 'codigo': partida.codigo,
                 'data': partida.data,
                 'arbitro': {'nome': partida.arbitro.nome, 'cpf': partida.arbitro.cpf},
-                'pontuacao_equipes': {equipe.nome: pontuacao for equipe, pontuacao in partida.pontuacao.items()}
+                'empate': partida.empate,
+                'vencedor': partida.vencedor,
+                'perdedor': partida.perdedor,
+                'pontuacao': partida.pontuacao
             }
             dados_partidas.append(dados_partida)
         self.tela_partidas.listar_partidas(dados_partidas)
@@ -87,12 +97,32 @@ class ControladorPartidas:
             return self.incluir_partida()
         equipes = [equipe_1, equipe_2]
         # Gerando pontuacao aleatoria
-        pontuacao = {equipe: {aluno: random.randint(0, 31) for aluno in equipe} for equipe in equipes}
+        pontuacao = dict()
+        for equipe in equipes:
+            pontuacao[equipe] = {'total': 0, 'pontuacao_individual': {}}
+            for aluno in equipe.alunos:
+                pontuacao_aluno = random.randint(0, 31)
+                pontuacao[equipe]['pontuacao_individual'][aluno] = pontuacao_aluno
+                pontuacao[equipe]['total'] += pontuacao_aluno
+        if pontuacao[equipe_1]['total'] == pontuacao[equipe_2]['total']:
+            empate = True
+            vencedor = perdedor = None
+        elif pontuacao[equipe_1]['total'] > pontuacao[equipe_2]['total']:
+            empate = False
+            vencedor = equipe_1
+            perdedor = equipe_2
+        else:
+            empate = False
+            vencedor = equipe_2
+            perdedor = equipe_1
         # Instanciando objeto e armazenando na lista
         self.__ultimo_codigo_gerado += 1
         nova_partida = Partida(
             codigo=self.__ultimo_codigo_gerado,
             data=data,
+            empate=empate,
+            vencedor=vencedor,
+            perdedor=perdedor,
             arbitro=arbitro,
             equipes=equipes,
             pontuacao=pontuacao
@@ -102,7 +132,7 @@ class ControladorPartidas:
         self.tela_partidas.mostrar_mensagem('Partida registrada com sucesso')
 
     def excluir_partida(self):
-        if len(self.cursos) == 0:
+        if len(self.partidas) == 0:
             return self.tela_partidas.mostrar_mensagem('Nenhuma partida registrada')
         codigo = self.tela_partidas.excluir_partida()
         indice_partida = self.pesquisar_partida_por_codigo(codigo)

@@ -8,18 +8,40 @@ class Partida:
         self,
         codigo: int,
         data: datetime,
+        empate: bool,
+        vencedor: Equipe | None,
+        perdedor: Equipe | None,
         arbitro: Arbitro,
         equipes: list[Equipe],
-        pontuacao: dict = {},
+        pontuacao: dict,
     ):
+        # Tratamento para código
         if isinstance(codigo, int):
             self.__codigo = codigo
         else:
             raise TypeError('Partida.codigo deve ser do tipo "int"')
+        # Tratamento para data
         if isinstance(data, datetime):
             self.__data = data
         else:
             raise TypeError('Partida.data deve ser do tipo "Date"')
+        # Tratamento para vencedor, perdedor e empate
+        if isinstance(empate, bool):
+            self.__empate = empate
+        else:
+            raise TypeError('Partida.empate deve ser do tipo "bool"')
+        if empate:
+            if vencedor is None and perdedor is None:
+                self.__vencedor = vencedor
+                self.__perdedor = perdedor
+            else:
+                raise TypeError('Partida.vencedor e Partida.perdedor devem ser nulos em caso de empate')
+        else:
+            if isinstance(vencedor, Equipe) and isinstance(perdedor, Equipe):
+                self.__vencedor = vencedor
+                self.__perdedor = perdedor
+            else:
+                raise TypeError('Partida.vencedor e Partida.perdedor devem ser do tipo "Equipe"')
         # Tramento para arbitro
         if isinstance(arbitro, Arbitro):
             self.__arbitro = arbitro
@@ -35,6 +57,18 @@ class Partida:
             self.__pontuacao = pontuacao
         else:
             raise TypeError('Partida.pontuacao deve ser do tipo "dict"')
+
+    @property
+    def empate(self) -> bool:
+        return self.__empate
+
+    @property
+    def vencedor(self) -> Equipe:
+        return self.__vencedor
+
+    @property
+    def perdedor(self) -> Equipe:
+        return self.__perdedor
 
     @property
     def codigo(self) -> int:

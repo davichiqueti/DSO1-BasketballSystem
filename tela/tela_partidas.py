@@ -24,15 +24,15 @@ class TelaPartidas(TelaBase):
             arbitro = partida['arbitro']
             print(f"Data Partida: {data.strftime('%d/%m/%Y')}   Código: {codigo}")
             print(f'Árbitro: {arbitro["nome"]} ({arbitro["cpf"]})')
-            print(f"PONTUAÇÕES:")
-            for equipe, pontuacao in partida['pontuacao_equipes'].items():
-                print(f"\n- EQUIPE {equipe}")
-                total = 0
-                for pontuacao_aluno in pontuacao:
-                    print(f'\t- {pontuacao_aluno["nome"]} ({pontuacao_aluno["matricula"]}): {pontuacao_aluno["pontos"]}')
-                    total += pontuacao_aluno['pontos']
-                print(f"- TOTAL EQUIPE {equipe}: {total}")
-        print('\n')
+            if partida["empate"]:
+                print(' Resultado: EMPATE')
+            else:
+                print(f'Resultado: Equipe "{partida["vencedor"].nome}" Vencedora!')
+            for equipe, pontuacao in partida['pontuacao'].items():
+                print(f"Pontuação da Equipe {equipe.nome}: [{pontuacao['total']} Pontos]")
+                for aluno, pontuacao_aluno in pontuacao['pontuacao_individual'].items():
+                    print(f'\t - Jogador: {aluno.nome}({aluno.matricula}) Pontos: {pontuacao_aluno}')
+            print('\n\n')
         self.esperar_resposta()
 
     def incluir_partida(self) -> dict:
@@ -47,20 +47,20 @@ class TelaPartidas(TelaBase):
         # Tratamento do arbitro
         cpf_arbitro = input('CPF do árbitro (Apenas números): ').strip()
         if not (cpf_arbitro.isnumeric() and len(cpf_arbitro) == 11):
-            self.mostrar_mensagem('O código do Árbitro deve ser númerico com 11 dígitos sem caracteres separadores')
+            self.mostrar_mensagem('O cpf do Árbitro deve conter os 11 dígitos do CPF sem caracteres adicionais')
             return self.incluir_partida()
         # Tratamento da data da partida
         data_atual = datetime.now()
         while True:
-            data_partida = input("Nova data da partida (dd/mm/aaaa): ")
+            data_partida = input("Data da partida (dd/mm/aaaa): ")
             try:
-                data_partida = datetime.strptime(data_partida, "%d/%m/%Y").date()
+                data_partida = datetime.strptime(data_partida, "%d/%m/%Y")
                 if data_partida > data_atual:
                     self.mostrar_mensagem('A data da partida não é válida. Posterior a data atual')
                     continue
                 break
             except ValueError:
-                print("Data de nascimento está incorreta, por favor informe uma data no modelo dd/mm/aaaa.")
+                print("A Data da partida está incorreta, por favor informe uma data no modelo dd/mm/aaaa.")
                 input("Aperte ENTER para continuar.")   
         return {
             'data': data_partida,
