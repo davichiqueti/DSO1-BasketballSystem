@@ -23,13 +23,13 @@ class TelaPartidas(TelaBase):
             data = partida["data"]
             arbitro = partida['arbitro']
             print(f"Data Partida: {data.strftime('%d/%m/%Y')}   Código: {codigo}")
-            print(f"Árbitro: {arbitro['nome']} ({arbitro['cpf']})")
+            print(f'Árbitro: {arbitro["nome"]} ({arbitro["cpf"]})')
             print(f"PONTUAÇÕES:")
             for equipe, pontuacao in partida['pontuacao_equipes'].items():
                 print(f"\n- EQUIPE {equipe}")
                 total = 0
                 for pontuacao_aluno in pontuacao:
-                    print(f'\t- {pontuacao_aluno['nome']} ({pontuacao_aluno['matricula']}): {pontuacao_aluno['pontos']}')
+                    print(f'\t- {pontuacao_aluno["nome"]} ({pontuacao_aluno["matricula"]}): {pontuacao_aluno["pontos"]}')
                     total += pontuacao_aluno['pontos']
                 print(f"- TOTAL EQUIPE {equipe}: {total}")
         print('\n')
