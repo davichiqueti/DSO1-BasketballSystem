@@ -97,6 +97,7 @@ class ControladorPartidas:
             equipes=equipes,
             pontuacao=pontuacao
         )
+        arbitro.numero_partidas += 1
         self.partidas.append(nova_partida)
         self.tela_partidas.mostrar_mensagem('Partida registrada com sucesso')
 
