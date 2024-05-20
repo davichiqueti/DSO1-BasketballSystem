@@ -95,15 +95,3 @@ class TelaPartidas(TelaBase):
                 return self.alterar_curso()
             dados_retorno["novo_nome"] = novo_nome.upper()
         return dados_retorno
-
-
-    def alterar_pontuacao_equipe(self, nome_equipe, dados_alunos: list[dict]) -> dict:
-        print(f'\nPontuação Equipe "{nome_equipe}"')
-        for aluno in dados_alunos:
-            pontos_aluno = input(f'- Pontos de {aluno['nome']} ({aluno['matricula']}): ')
-            if not pontos_aluno.isnumeric() or int(pontos_aluno) < 0:
-                self.mostrar_mensagem('A pontuação dos alunos deve ser um número inteiro igual ou maior do que 0')
-                return self.incluir_partida()
-            else:
-                aluno['pontos'] = int(pontos_aluno)
-        return dados_alunos

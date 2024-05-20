@@ -1,5 +1,6 @@
 from entidade.partida import Partida
 from tela.tela_partidas import TelaPartidas
+import random
 
 
 class ControladorPartidas:
@@ -85,18 +86,16 @@ class ControladorPartidas:
         if equipe_2 is None:
             self.tela_partidas.mostrar_mensagem(f'Equipe com código "{codigo_equipe_2}" não encontrado')
             return self.incluir_partida()
-        dados_alunos_equipe_1 = [{'nome': aluno.nome, 'matricula': aluno.matricula} for aluno in equipe_1.alunos]
-        dados_alunos_equipe_2 = [{'nome': aluno.nome, 'matricula': aluno.matricula} for aluno in equipe_2.alunos]
-        pontuacao_equipe_1 = self.tela_partidas.alterar_pontuacao_equipe(equipe_1.nome, dados_alunos_equipe_1)
-        pontuacao_equipe_2 = self.tela_partidas.alterar_pontuacao_equipe(equipe_2.nome, dados_alunos_equipe_2)
-        pontuacao = {equipe_1: pontuacao_equipe_1, equipe_2: pontuacao_equipe_2}
+        equipes = [equipe_1, equipe_2]
+        # Gerando pontuacao aleatoria
+        pontuacao = {equipe: {aluno: random.randint(0, 31) for aluno in equipe} for equipe in equipes}
         # Instanciando objeto e armazenando na lista
         self.__ultimo_codigo_gerado += 1
         nova_partida = Partida(
             codigo=self.__ultimo_codigo_gerado,
             data=data,
             arbitro=arbitro,
-            equipes=[equipe_1, equipe_2],
+            equipes=equipes,
             pontuacao=pontuacao
         )
         self.partidas.append(nova_partida)
