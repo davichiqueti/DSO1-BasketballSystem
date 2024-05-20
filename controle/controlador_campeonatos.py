@@ -1,7 +1,7 @@
 from entidade.campeonato import Campeonato
 from tela.tela_campeonatos import TelaCampeonatos
 from controle.controlador_sistema import *
-
+import time
 
 
 class ControladorCampeonatos:
@@ -65,7 +65,8 @@ class ControladorCampeonatos:
         dict_incluir_campeonato = self.tela_campeonatos.incluir_campeonato()
         codigo = dict_incluir_campeonato["codigo_campeonato"]
         equipes = dict_incluir_campeonato["lista_equipes"]
-        novo_campeonato = Campeonato(codigo, equipes)
+        descricao = dict_incluir_campeonato["descricao"]
+        novo_campeonato = Campeonato(codigo, descricao, equipes)
         if isinstance(novo_campeonato, Campeonato):
             self.__campeonatos.append(Campeonato)
 
@@ -101,7 +102,7 @@ class ControladorCampeonatos:
                     return self.tela_campeonatos.mostrar_mensagem("O codigo de partida já está vinculado a uma partida existente nesse campeonato.")
             
             self.campeonato.partida.append(nova_partida)
-            return self.tela_campeonatos.mostrar_mensagem(f"A partida com código {nova_partida.codigo} foi incluida no campeonato {cameponato.nome}, {campeonato.codigo}.")
+            return self.tela_campeonatos.mostrar_mensagem(f"A partida com código {nova_partida.codigo} foi incluida no campeonato {campeonato.nome}, {campeonato.codigo}.")
           
 
 
@@ -167,7 +168,8 @@ class ControladorCampeonatos:
             dados_campeonatos.append(dados_campeonatos_dict)
         return self.tela_campeonatos.listar_campeonatos(dados_campeonatos)
 
-
+    def relatorios_campeonato(self):
+        campeonato = 
     
     def pesquisar_campeonato_por_codigo(self, codigo: int) -> int:
         for i in range(len(self.__campeonatos)):

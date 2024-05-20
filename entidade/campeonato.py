@@ -3,10 +3,14 @@ from entidade.partida import Partida
 
 
 class Campeonato:
-    def __init__(self, codigo: int, equipes: list[Equipe]):
+    def __init__(self, codigo: int, descricao: str, equipes: list[Equipe]):
         self.__partidas = list()
         self.__pontuacao = dict()
         self.__codigo = codigo
+        if isinstance(descricao, str):
+            self.__descricao = descricao
+        else:
+            raise TypeError('Campeonato.descricao deve ser do tipo "str"')
         # Tratamento das equipes
         if not isinstance(equipes, list):
             raise TypeError('Campeonato.equipes deve ser do tipo "list"')
@@ -18,6 +22,17 @@ class Campeonato:
     @property
     def codigo(self) -> int:
         return self.__codigo
+
+    @property
+    def descricao(self) -> str:
+        return self.__descricao
+
+    @descricao.setter
+    def descricao(self, descricao: str):
+        if isinstance(descricao, str):
+            self.__descricao = descricao
+        else:
+            raise TypeError('Campeonato.descricao deve ser do tipo "str"')       
 
     @property
     def equipes(self) -> list[Equipe]:

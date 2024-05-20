@@ -32,6 +32,14 @@ class TelaCampeonatos(TelaBase):
                 print("Código inválido, por favor informe um código válido")
                 input("Aperte ENTER para continuar.")
 
+        while True:
+            descricao_campeonato = input("Insira a descrição do Campeonato: ")
+            if descricao_campeonato.isspace():
+                self.mostrar_mensagem('Descrição inválida. Descrição inserida é vazia')
+            if len(descricao_campeonato) < 10:
+                self.mostrar_mensagem('Descrição inválida. Descrição deve ter mais de 10 caracteres')
+            else:
+                break
         equipes = list()
         #equipes
         while True:
@@ -49,7 +57,8 @@ class TelaCampeonatos(TelaBase):
         
         dict_incluir_campeonato = {
             "codigo_campeonato" : codigo_campeonato,
-            "lista_equipes" : equipes
+            "lista_equipes" : equipes,
+            "descricao": descricao_campeonato
         }
 
         return dict_incluir_campeonato
