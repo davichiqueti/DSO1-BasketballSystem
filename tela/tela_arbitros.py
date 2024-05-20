@@ -25,8 +25,26 @@ class TelaArbitros(TelaBase):
     def incluir_arbitro(self):
         self.limpar_tela()
         print("-------- Dados do Arbitro --------")
-        nome = input("Nome: ")
-        cpf = input("CPF: ")
+
+
+        while True:
+            nome = input("Nome: ") 
+            if self.verificar_string_alpha(nome) and 4 <= len(nome) <= 60:
+                break
+            else:
+                print("nome está incorreto, por favor informe um nome válido")
+                input("Aperte enter para continuar")
+
+
+        while True:
+            cpf = input("CPF: ")
+            if len(cpf) == 11 and cpf.isdigit():
+                break
+            else:    
+                print("CPF está incorreto, por favor informe um CPF válido")
+                input("Aperte ENTER para continuar.")
+
+
         while True:
             data_nascimento = input("Data de nascimento: ")
             try:
@@ -34,10 +52,42 @@ class TelaArbitros(TelaBase):
                 break
             except ValueError:
                 print("formato de data informado está incorreto, por favor, informar no formato dd/mm/aaaa")
-        estado = input("Estado: ")
-        cidade = input("Cidade: ")
-        bairro = input("Bairro: ")
-        numero_partidas = input("Número de partidas: ")
+        
+
+        while True:
+            estado = input("Estado: ")
+            if self.verificar_string_alpha(estado) and 2 <= len(estado) <= 18:
+                break
+            else:
+                print("O estado informado está incorreto.")
+                input("Aperte ENTER para continuar.")
+
+
+        while True:
+            cidade = input("Cidade: ")
+            if self.verificar_string_alpha(cidade) and 3 <= len(cidade) <= 60:
+                break
+            else:
+                print("A cidade informada é inválida.")
+                input("Aperte ENTER para continuar.")
+
+
+        while True:
+            bairro = input("Bairro: ")
+            if self.verificar_string_alpha(bairro) and 4 <= len(bairro) <= 60:
+                break
+            else:
+                print("O bairro informado é inválido.")
+                input("Aperte ENTER para continuar.")
+
+
+        while True:
+            numero_partidas = input("Numero de partidas: ")
+            if numero_partidas.isnumeric() and len(numero_partidas) <= 4:
+                break
+            else:
+                print("O número de partidas informado é inválida.")
+                input("Aperte ENTER para continuar.")  
 
         dados_arbitro_inclusao = {
                                     "Nome": nome,
@@ -53,38 +103,100 @@ class TelaArbitros(TelaBase):
 
 
     def alterar_arbitro(self):
+
+
         self.limpar_tela()
         print()
         print('-------- Informe o CPF atual do arbitro para fazer a alteração --------')
-        cpf = input("CPF: ")
-            
-        if len(cpf) != 11 or not cpf.isdigit() or not isinstance(cpf, str):
-            print("cpf informado não encontrado.")
-            return self.alterar_arbitro()
-        else:
-            cpf_alteracao = cpf
-            self.limpar_tela()
-            print('-------- Informe os dados para alteração de um arbitro já cadastrado --------')
+
+        while True:
             cpf = input("CPF: ")
-            nome = input("Nome: ")
+            if len(cpf) == 11 and cpf.isdigit():
+                break
+            else:    
+                print("CPF está incorreto, por favor informe um CPF válido")
+                input("Aperte ENTER para continuar.")
+            
+        cpf_alteracao = cpf
+        self.limpar_tela()
+
+        print('-------- Informe os dados para alteração de um arbitro já cadastrado --------')
+
+
+        while True:
+            cpf = input("CPF: ")
+            if len(cpf) == 11 and cpf.isdigit():
+                break
+            else:    
+                print("CPF está incorreto, por favor informe um CPF válido")
+                input("Aperte ENTER para continuar.")
+
+
+        while True:
+            nome = input("Nome: ") 
+            if self.verificar_string_alpha(nome) and 4 <= len(nome) <= 60:
+                break
+            else:
+                print("nome está incorreto, por favor informe um nome válido")
+                input("Aperte enter para continuar")
+
+        while True:
             data_nascimento = input("Data de nascimento: ")
+            try:
+                data_nascimento = datetime.strptime(data_nascimento, "%d/%m/%Y").date()
+                break
+            except ValueError:
+                print("Data de nascimento está incorreta, por favor informe uma data no modelo dd/mm/aaaa.")
+                input("Aperte ENTER para continuar.")            
+
+
+
+        while True:
             estado = input("Estado: ")
+            if self.verificar_string_alpha(estado) and 2 <= len(estado) <= 18:
+                break
+            else:
+                print("O estado informado está incorreto.")
+                input("Aperte ENTER para continuar.")
+
+        while True:
             cidade = input("Cidade: ")
+            if self.verificar_string_alpha(cidade) and 3 <= len(cidade) <= 60:
+                break
+            else:
+                print("A cidade informada é inválida.")
+                input("Aperte ENTER para continuar.")
+
+
+        while True:
             bairro = input("Bairro: ")
-            numero_partidas = input("Numero de Partidas: ")  
+            if self.verificar_string_alpha(bairro) and 4 <= len(bairro) <= 60:
+                break
+            else:
+                print("O bairro informado é inválido.")
+                input("Aperte ENTER para continuar.")
 
 
-            dados_arbitro_alteracao = {
-                "CPF alteracao" : cpf_alteracao,
-                "Nome" : nome,
-                "CPF" : cpf,
-                "Data de nascimento" : data_nascimento,
-                "Estado" : estado,
-                "Cidade" : cidade,
-                "Bairro" : bairro,
-                "Numero de Partidas" : numero_partidas
-            }
-            return dados_arbitro_alteracao
+        while True:
+            numero_partidas = input("Numero de Partidas: ")
+            if numero_partidas.isnumeric() and len(numero_partidas) <= 4:
+                break
+            else:
+                print("O número de partidas informado é inválida.")
+                input("Aperte ENTER para continuar.")  
+
+
+        dados_arbitro_alteracao = {
+            "CPF alteracao" : cpf_alteracao,
+            "Nome" : nome,
+            "CPF" : cpf,
+            "Data de nascimento" : data_nascimento,
+            "Estado" : estado,
+            "Cidade" : cidade,
+            "Bairro" : bairro,
+            "Numero de Partidas" : numero_partidas
+        }
+        return dados_arbitro_alteracao
 
 
     
