@@ -112,22 +112,30 @@ class ControladorAlunos:
         for aluno in self.__alunos:
             if cpf_aluno_antigo == aluno.cpf:
                 novo_aluno = aluno
-                break
-        if novo_aluno is None:
+
+
+        #verifica se o CPF novo já está sendo usado
+        for alunos_existentes in self.__alunos:
+                if dados_aluno_alteracao["CPF"] == alunos_existentes.cpf:
+                    return self.tela_alunos.mostrar_mensagem("O CPF informado já está cadastrado no sistema, insira um CPF válido.")
+                
+
+        if novo_aluno in self.__alunos: 
+            #alteracao            
+            novo_aluno.nome = dados_aluno_alteracao["Nome"]
+            novo_aluno.cpf =  dados_aluno_alteracao["CPF"]
+            novo_aluno.data_nascimento =  dados_aluno_alteracao["Data de nascimento"]
+            novo_aluno.endereco.estado =  dados_aluno_alteracao["Estado"]
+            novo_aluno.endereco.cidade =  dados_aluno_alteracao["Cidade"]
+            novo_aluno.endereco.bairro = dados_aluno_alteracao["Bairro"] 
+            novo_aluno.matricula = dados_aluno_alteracao["matricula"] 
+            novo_aluno.curso.curso = curso_aluno
+            self.tela_alunos.limpar_tela()
+            return self.tela_alunos.mostrar_mensagem(f"O cadastro do aluno: {novo_aluno.nome}, matricula: {novo_aluno.matricula} do curso: {novo_aluno.curso.nome}, endereço: {novo_aluno.endereco.estado}, {novo_aluno.endereco.cidade}, {novo_aluno.endereco.bairro}. Foi alterado com sucesso!")
+        
+        else:
             return self.tela_alunos.mostrar_mensagem("O CPF informado não corresponde a nenhum aluno previamente cadastrado.")
                     
-        #alteracao            
-        aluno.nome = dados_aluno_alteracao["Nome"]
-        aluno.cpf =  dados_aluno_alteracao["CPF"]
-        aluno.data_nascimento =  dados_aluno_alteracao["Data de nascimento"]
-        aluno.estado =  dados_aluno_alteracao["Estado"]
-        aluno.cidade =  dados_aluno_alteracao["Cidade"]
-        aluno.bairro = dados_aluno_alteracao["Bairro"] 
-        aluno.matricula = dados_aluno_alteracao["Matricula"] 
-        aluno.curso = curso_aluno
-        self.tela_alunos.limpar_tela()
-        return self.tela_alunos.mostrar_mensagem(f"O cadastro do aluno{aluno.nome}, matricula {aluno.matricula} do curso {aluno.curso.nome}, foi alterado com sucesso!")
-
 
     def excluir_aluno(self):
         if len(self.__alunos) != 0:

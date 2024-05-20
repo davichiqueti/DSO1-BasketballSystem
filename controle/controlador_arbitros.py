@@ -79,25 +79,34 @@ class ControladorArbitros:
         if len(self.__arbitros) != 0:
             dados_arbitro_alteracao = self.__tela_arbitros.alterar_arbitro()
             cpf_alteracao = dados_arbitro_alteracao["CPF alteracao"]
-            arbitro = self.pesquisar_arbitros_por_cpf(cpf_alteracao)
-            for abitros_existentes in self.__arbitros:
-                    if dados_arbitro_alteracao["CPF"] == abitros_existentes.cpf:
+            novo_arbitro = self.pesquisar_arbitros_por_cpf(cpf_alteracao)
+
+            #verifica se o CPF atual realmente está vinculado a um arbitro na lista
+            #for item in self.__arbitros:
+                #if item.cpf == cpf_alteracao:
+                   # novo_arbitro = item
+
+            #verifica se o CPF novo já está sendo usado
+            for arbitros_existentes in self.__arbitros:
+                    if dados_arbitro_alteracao["CPF"] == arbitros_existentes.cpf:
                         return self.tela_arbitros.mostrar_mensagem("O CPF informado já está cadastrado no sistema, insira um CPF válido.")
                 
-            if arbitro in self.__arbitros:
-                arbitro.nome = dados_arbitro_alteracao["Nome"]
-                arbitro.cpf = dados_arbitro_alteracao["CPF"]
-                arbitro.data_nascimento = dados_arbitro_alteracao["Data de nascimento"]
-                arbitro.estado = dados_arbitro_alteracao["Estado"]
-                arbitro.cidade = dados_arbitro_alteracao["Cidade"]
-                arbitro.bairro = dados_arbitro_alteracao["Bairro"]
-                arbitro.numero_partidas = dados_arbitro_alteracao["Numero de Partidas"]
+            if novo_arbitro in self.__arbitros:
+                novo_arbitro.nome = dados_arbitro_alteracao["Nome"]
+                novo_arbitro.cpf = dados_arbitro_alteracao["CPF"]
+                novo_arbitro.data_nascimento = dados_arbitro_alteracao["Data de nascimento"]
+                novo_arbitro.endereco.estado = dados_arbitro_alteracao["Estado"]
+                novo_arbitro.endereco.cidade = dados_arbitro_alteracao["Cidade"]
+                novo_arbitro.endereco.bairro = dados_arbitro_alteracao["Bairro"]
+                novo_arbitro.numero_partidas = dados_arbitro_alteracao["Numero de Partidas"]
                 self.tela_arbitros.limpar_tela()
-                return self.tela_arbitros.mostrar_mensagem("Cadastro do arbitro alterado.")
+                return self.tela_arbitros.mostrar_mensagem(f"Cadastro do arbitro {novo_arbitro.nome}, {novo_arbitro.cpf}, numero de partidas {novo_arbitro.numero_partidas}, endereço: {novo_arbitro.endereco.estado}, {novo_arbitro.endereco.cidade}, {novo_arbitro.endereco.bairro} alterado.")
+            
             else:
                 self.tela_arbitros.limpar_tela()
                 self.tela_arbitros.mostrar_mensagem("CPF informado não corresponde a nenhum arbitro.")
                 return self.tela_arbitros.alterar_arbitro()
+            
         else:
             return self.tela_arbitros.mostrar_mensagem("Nenhum arbitro cadastrado no sistema.")
 
@@ -123,17 +132,18 @@ class ControladorArbitros:
     def listar_arbitros(self):
         if len(self.__arbitros) == 0:
             return self.tela_arbitros.mostrar_mensagem("\nAinda não temos arbitros cadastrados.\n")
+        
         dados_arbitros = list()
-        for arbitro in self.__arbitros:
+        for novo_arbitro in self.__arbitros:
             dados_arbitros_dict = dict()
             dados_arbitros_dict = {
-                "Nome": arbitro.nome,
-                "CPF": arbitro.cpf,
-                "Data de Nascimento": arbitro.data_nascimento,
-                "estado": arbitro.endereco.estado,
-                "cidade": arbitro.endereco.cidade,
-                "bairro": arbitro.endereco.bairro,
-                "numero partidas": arbitro.numero_partidas
+                "Nome": novo_arbitro.nome,
+                "CPF": novo_arbitro.cpf,
+                "Data de Nascimento": novo_arbitro.data_nascimento,
+                "estado": novo_arbitro.endereco.estado,
+                "cidade": novo_arbitro.endereco.cidade,
+                "bairro": novo_arbitro.endereco.bairro,
+                "numero partidas": novo_arbitro.numero_partidas
             }
             dados_arbitros.append(dados_arbitros_dict)
 
