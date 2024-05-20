@@ -1,5 +1,6 @@
 from entidade.partida import Partida
 from tela.tela_partidas import TelaPartidas
+import random
 
 
 class ControladorPartidas:
@@ -29,8 +30,7 @@ class ControladorPartidas:
         opcoes = {
             '1': 'Listar Partidas',
             '2': 'Incluir Partida',
-            '3': 'Alterar Partida',
-            '4': 'Excluir Partida',
+            '3': 'Excluir Partida',
             '10': 'Sair'
         }
         opcao_escolhida = str()
@@ -77,60 +77,29 @@ class ControladorPartidas:
         # Tratamento para as equipes da partida
         codigo_equipe_1 = dados['codigo_equipe_1']
         codigo_equipe_2 = dados['codigo_equipe_2']
-        indice_equipe_1 = self.controlador_sistema.controlador_equipes.pesquisar_equipe_por_codigo(codigo_equipe_1)
-        indice_equipe_2 = self.controlador_sistema.controlador_equipes.pesquisar_equipe_por_codigo(codigo_equipe_2)
-        if indice_equipe_1 is None:
-            self.tela_partidas.mostrar_mensagem(f'Equipe com código "{indice_equipe_1}" não encontrado')
+        equipe_1 = self.controlador_sistema.controlador_equipes.pesquisar_equipe_por_codigo(codigo_equipe_1)
+        equipe_2 = self.controlador_sistema.controlador_equipes.pesquisar_equipe_por_codigo(codigo_equipe_2)
+        if equipe_1 is None:
+            self.tela_partidas.mostrar_mensagem(f'Equipe com código "{codigo_equipe_1}" não encontrado')
             return self.incluir_partida()
-        if indice_equipe_2 is None:
+        if equipe_2 is None:
             self.tela_partidas.mostrar_mensagem(f'Equipe com código "{codigo_equipe_2}" não encontrado')
             return self.incluir_partida()
-        equipe_1 = self.controlador_sistema.controlador_equipes.equipes[indice_equipe_1]
-        equipe_2 = self.controlador_sistema.controlador_equipes.equipes[indice_equipe_2]
-        dados_alunos_equipe_1 = [{'nome': aluno.nome, 'matricula': aluno.matricula} for aluno in equipe_1.alunos]
-        dados_alunos_equipe_2 = [{'nome': aluno.nome, 'matricula': aluno.matricula} for aluno in equipe_2.alunos]
-        pontuacao_equipe_1 = self.tela_partidas.alterar_pontuacao_equipe(equipe_1.nome, dados_alunos_equipe_1)
-        pontuacao_equipe_2 = self.tela_partidas.alterar_pontuacao_equipe(equipe_2.nome, dados_alunos_equipe_2)
-        pontuacao = {equipe_1: pontuacao_equipe_1, equipe_2: pontuacao_equipe_2}
+        equipes = [equipe_1, equipe_2]
+        # Gerando pontuacao aleatoria
+        pontuacao = {equipe: {aluno: random.randint(0, 31) for aluno in equipe} for equipe in equipes}
         # Instanciando objeto e armazenando na lista
         self.__ultimo_codigo_gerado += 1
         nova_partida = Partida(
             codigo=self.__ultimo_codigo_gerado,
             data=data,
             arbitro=arbitro,
-            equipes=[equipe_1, equipe_2],
+            equipes=equipes,
             pontuacao=pontuacao
         )
+        arbitro.numero_partidas += 1
         self.partidas.append(nova_partida)
         self.tela_partidas.mostrar_mensagem('Partida registrada com sucesso')
-
-    def alterar_partida(self):
-        if len(self.partidas) == 0:
-            return self.tela_partidas.mostrar_mensagem('Nenhum curso cadastrado')
-        dados = self.tela_partidas.alterar_partida()
-        codigo_antigo = dados['codigo_antigo']
-        indice_curso = self.pesquisar_curso_por_codigo(codigo_antigo)
-        if indice_curso == None:
-            self.tela_cursos.mostrar_mensagem(
-                f'Curso com código "{codigo_antigo}" não encontrado'
-            )
-        curso = self.cursos[indice_curso]
-        confirmacao = self.tela_cursos.confirmar_acao(
-            f'Deseja realmente alterar o curso {curso.nome}?'
-        )
-        if confirmacao:
-            # Atualizando dados do curso que foram retornados pela interface
-            novo_codigo = dados.get('novo_codigo')
-            if novo_codigo is not None:
-                if novo_codigo != codigo_antigo and self.pesquisar_curso_por_codigo(novo_codigo) != None:
-                    self.tela_cursos.mostrar_mensagem('Já existe um curso com este código!')
-                    return self.alterar_curso()
-                curso.codigo = novo_codigo
-            curso.nome = dados.get('novo_nome', curso.nome)
-            # Retornando uma mensagem de sucesso para o usuário
-            self.tela_cursos.mostrar_mensagem('Curso alterado')
-        else:
-            self.tela_cursos.mostrar_mensagem('Alteração cancelada')
 
     def excluir_partida(self):
         if len(self.cursos) == 0:
