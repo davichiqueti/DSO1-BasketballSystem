@@ -130,6 +130,7 @@ class ControladorPartidas:
         arbitro.numero_partidas += 1
         self.partidas.append(nova_partida)
         self.tela_partidas.mostrar_mensagem('Partida registrada com sucesso')
+        return True
 
     def excluir_partida(self):
         if len(self.partidas) == 0:

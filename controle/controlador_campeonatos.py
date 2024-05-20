@@ -99,36 +99,29 @@ class ControladorCampeonatos:
     def incluir_partida_campeonato(self):
         if len(self.__campeonatos) == 0:
             return self.tela_campeonatos.mostrar_mensagem("\nAinda não temos campeonatos cadastrados.\n")
-        dict_retorno = self.tela_campeonatos.incluir_partida_campeonato()
-        retorno = dict_retorno["codigo_campeonato"] 
-        if retorno == 'incluir':
-            return self.__controlador_sistema.controlador_partidas.incluir_partida()
-        else:
-            #definindo campeonato e partida
-            codigo_campeonato = dict_retorno["codigo_campeonato"]
-            indice_campeonato = self.pesquisar_campeonato_por_codigo(codigo_campeonato)
-            if indice_campeonato != None:
-                campeonato = self.__campeonatos[indice_campeonato]
+        # Selecionando campeonato para exibir os relátorios
+        dados_campeonatos = [{'descricao': campeonato.descricao, 'codigo': campeonato.codigo} for campeonato in self.campeonatos]
+        codigo_campeonato = self.tela_campeonatos.selecionar_campeonato(dados_campeonatos)
+        indice_campeonato = self.pesquisar_campeonato_por_codigo(codigo_campeonato)
+        campeonato = self.campeonatos[indice_campeonato]
+        cadastro_partida = False
+        while not cadastro_partida:
+            cadastro_partida = self.controlador_sistema.controlador_partida.incluir_partida()
+            if cadastro_partida:
+                partida = self.controlador_sistema.controlador_partida.partidas[-1]
+                campeonato.partidas.append(partida)
+                # Atualizando a pontuação do campeonato com base no resultado da partida
+                if partida.empate:
+                    equipe_1 = partida.equipes[0]
+                    equipe_2 = partida.equipes[1]
+                    campeonato.pontuacao[equipe_1] = campeonato.pontuacao.get(equipe_1, 0) + 1
+                    campeonato.pontuacao[equipe_2] = campeonato.pontuacao.get(equipe_1, 0) + 1
+                else:
+                    campeonato.pontuacao[partida.vencedor] = campeonato.pontuacao.get(partida.vencedor, 0) + 3
+                self.tela_campeonatos.mostrar_mensagem('Inclusão da partida bem sucedida')
+                break
             else:
-                return self.tela_campeonatos.mostrar_mensagem("O codigo de campeonato não corresponde a nenhum campeonato cadastrado.")
-            
-            codigo_partida = dict_retorno["codigo_partida"]
-            indice_partida = self.__controlador_sistema.controlador_partidas.pesquisar_partida_por_codigo(codigo_partida)
-            if indice_partida != None:
-                nova_partida = self.controlador_sistema.controlador_partidas.partidas[indice_partida]
-            else:
-                return self.tela_campeonatos.mostrar_mensagem("O codigo de partida não corresponde a nenhuma partida cadastrada.")
-            #inclusão da partida
-            for partidas in self.campeonato.partidas:
-                if partidas.codigo == nova_partida.codigo:
-                    return self.tela_campeonatos.mostrar_mensagem("O codigo de partida já está vinculado a uma partida existente nesse campeonato.")
-            
-            self.campeonato.partida.append(nova_partida)
-            return self.tela_campeonatos.mostrar_mensagem(f"A partida com código {nova_partida.codigo} foi incluida no campeonato {campeonato.codigo}.")
-          
-
-
-
+                self.tela_campeonatos.mostrar_mensagem('Erro no cadastro da partida. Tente novamente')
 
     def alterar_campeonato(self):
         if len(self.__campeonatos) == 0:
