@@ -77,21 +77,3 @@ class TelaPartidas(TelaBase):
             self.mostrar_mensagem('Tentativa de exclusão por código não númerico')
             return self.excluir_partida()
         return int(codigo)
-
-    def alterar_partida(self) -> dict:
-        self.limpar_tela()
-        dados_retorno = dict()
-        print('--- ALTERAR PARTIDA ---\n')
-        # Tratamento para o código do curso a ser alterado
-        codigo_antigo = input('Código da partida a ser alterada: ')
-        if not codigo_antigo.isnumeric():
-            self.mostrar_mensagem('Tentativa de alteração por código não númerico')
-            return self.alterar_partida()
-        # Tratamento para o novo nome (Se for inserido)
-        novo_nome = input('Nova data: ')
-        if novo_nome and not novo_nome.isspace():
-            if not (5 <= len(novo_nome) <= 60):
-                self.mostrar_mensagem('O novo nome do curso deve ter entre 5 a 60 caracteres')
-                return self.alterar_curso()
-            dados_retorno["novo_nome"] = novo_nome.upper()
-        return dados_retorno
