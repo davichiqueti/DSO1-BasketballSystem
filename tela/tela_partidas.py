@@ -51,23 +51,51 @@ class TelaPartidas(TelaBase):
             return self.incluir_partida()
         # Tratamento da data da partida
         data_atual = datetime.now()
-        dia = input('Dia da partida: ').strip()
-        mes = input('Mês da partida: ').strip()
-        ano = input('Ano da partida: ').strip()
-        if not (ano.isnumeric() and mes.isnumeric() and dia.isnumeric()):
-            self.mostrar_mensagem('Os campos da data devem ser um números inteiros')
-            return self.incluir_partida()
-        else:
-            data = datetime(year=int(ano), month=int(mes), day=int(dia))
-            if data > data_atual:
-                self.mostrar_mensagem('A data da partida não é inválida por ser posterior a data atual')
-                return self.incluir_partida()        
+        while True:
+            data_partida = input("Nova data da partida (dd/mm/aaaa): ")
+            try:
+                data_partida = datetime.strptime(data_partida, "%d/%m/%Y").date()
+                if data_partida > data_atual:
+                    self.mostrar_mensagem('A data da partida não é válida. Posterior a data atual')
+                    continue
+                break
+            except ValueError:
+                print("Data de nascimento está incorreta, por favor informe uma data no modelo dd/mm/aaaa.")
+                input("Aperte ENTER para continuar.")   
         return {
-            'data': data,
+            'data': data_partida,
             'cpf_arbitro': cpf_arbitro,
             'codigo_equipe_1': int(codigo_equipe_1),
             'codigo_equipe_2': int(codigo_equipe_2)
         }
+
+    def excluir_partida(self) -> int:
+        self.limpar_tela()
+        print('--- EXCLUIR PARTIDA ---\n')
+        codigo = input('Código da partida a ser exclúida: ')
+        if not codigo.isnumeric():
+            self.mostrar_mensagem('Tentativa de exclusão por código não númerico')
+            return self.excluir_partida()
+        return int(codigo)
+
+    def alterar_partida(self) -> dict:
+        self.limpar_tela()
+        dados_retorno = dict()
+        print('--- ALTERAR PARTIDA ---\n')
+        # Tratamento para o código do curso a ser alterado
+        codigo_antigo = input('Código da partida a ser alterada: ')
+        if not codigo_antigo.isnumeric():
+            self.mostrar_mensagem('Tentativa de alteração por código não númerico')
+            return self.alterar_partida()
+        # Tratamento para o novo nome (Se for inserido)
+        novo_nome = input('Nova data: ')
+        if novo_nome and not novo_nome.isspace():
+            if not (5 <= len(novo_nome) <= 60):
+                self.mostrar_mensagem('O novo nome do curso deve ter entre 5 a 60 caracteres')
+                return self.alterar_curso()
+            dados_retorno["novo_nome"] = novo_nome.upper()
+        return dados_retorno
+
 
     def alterar_pontuacao_equipe(self, nome_equipe, dados_alunos: list[dict]) -> dict:
         print(f'\nPontuação Equipe "{nome_equipe}"')

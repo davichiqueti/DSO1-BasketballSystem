@@ -29,8 +29,8 @@ class ControladorPartidas:
         opcoes = {
             '1': 'Listar Partidas',
             '2': 'Incluir Partida',
-            #'3': 'Alterar Partida',
-            #'4': 'Excluir Partida',
+            '3': 'Alterar Partida',
+            '4': 'Excluir Partida',
             '10': 'Sair'
         }
         opcao_escolhida = str()
@@ -39,8 +39,8 @@ class ControladorPartidas:
             match opcao_escolhida:
                 case '1': self.listar_partidas()
                 case '2': self.incluir_partida()
-                #case '3': self.alterar_partida()
-                #case '4': self.excluir_partida()
+                case '3': self.alterar_partida()
+                case '4': self.excluir_partida()
                 case '10': break
                 case _: self.tela_partidas.mostrar_mensagem('Opção Escolhida Não Existe')
 
@@ -104,6 +104,53 @@ class ControladorPartidas:
         self.partidas.append(nova_partida)
         self.tela_partidas.mostrar_mensagem('Partida registrada com sucesso')
 
+    def alterar_partida(self):
+        if len(self.partidas) == 0:
+            return self.tela_partidas.mostrar_mensagem('Nenhum curso cadastrado')
+        dados = self.tela_partidas.alterar_partida()
+        codigo_antigo = dados['codigo_antigo']
+        indice_curso = self.pesquisar_curso_por_codigo(codigo_antigo)
+        if indice_curso == None:
+            self.tela_cursos.mostrar_mensagem(
+                f'Curso com código "{codigo_antigo}" não encontrado'
+            )
+        curso = self.cursos[indice_curso]
+        confirmacao = self.tela_cursos.confirmar_acao(
+            f'Deseja realmente alterar o curso {curso.nome}?'
+        )
+        if confirmacao:
+            # Atualizando dados do curso que foram retornados pela interface
+            novo_codigo = dados.get('novo_codigo')
+            if novo_codigo is not None:
+                if novo_codigo != codigo_antigo and self.pesquisar_curso_por_codigo(novo_codigo) != None:
+                    self.tela_cursos.mostrar_mensagem('Já existe um curso com este código!')
+                    return self.alterar_curso()
+                curso.codigo = novo_codigo
+            curso.nome = dados.get('novo_nome', curso.nome)
+            # Retornando uma mensagem de sucesso para o usuário
+            self.tela_cursos.mostrar_mensagem('Curso alterado')
+        else:
+            self.tela_cursos.mostrar_mensagem('Alteração cancelada')
+
+    def excluir_partida(self):
+        if len(self.cursos) == 0:
+            return self.tela_partidas.mostrar_mensagem('Nenhuma partida registrada')
+        codigo = self.tela_partidas.excluir_partida()
+        indice_partida = self.pesquisar_partida_por_codigo(codigo)
+        if indice_partida == None:
+            self.tela_partidas.mostrar_mensagem(
+                f'Curso com código "{codigo}" não encontrado'
+            )
+        confirmacao = self.tela_partidas.confirmar_acao(
+            f'Deseja realmente excluir a partida com código {codigo}?'
+        )
+        if confirmacao:
+            self.partidas.pop(indice_partida)
+            self.tela_partidas.mostrar_mensagem('Partida excluída')
+        else:
+            self.tela_partidas.mostrar_mensagem('Exclusão cancelada')
+
+        
     def pesquisar_partida_por_codigo(self, codigo: int) -> int:
         """
         Retorna o índice do curso com o código informado.\n  
