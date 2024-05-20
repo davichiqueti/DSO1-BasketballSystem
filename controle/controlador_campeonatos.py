@@ -167,9 +167,6 @@ class ControladorCampeonatos:
             }
             dados_campeonatos.append(dados_campeonatos_dict)
         return self.tela_campeonatos.listar_campeonatos(dados_campeonatos)
-
-    def relatorios_campeonato(self):
-        campeonato = 
     
     def pesquisar_campeonato_por_codigo(self, codigo: int) -> int:
         for i in range(len(self.__campeonatos)):
