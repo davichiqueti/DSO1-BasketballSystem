@@ -38,7 +38,7 @@ class TelaAlunos(TelaBase):
 
         while True:
             cpf = input("cpf: ")
-            if len(cpf) == 11 and cpf.isnumeric():
+            if len(cpf) == 11 and cpf.isdigit():
                 break
             else:    
                 print("CPF está incorreto, por favor informe um CPF válido")
@@ -118,7 +118,7 @@ class TelaAlunos(TelaBase):
 
         while True:
             cpf_alteracao = input("cpf: ")
-            if len(cpf_alteracaof) == 11:
+            if len(cpf_alteracao) == 11 and cpf_alteracao.isdigit():
                 break
             else:    
                 print("CPF está incorreto, por favor informe um CPF válido")
@@ -131,7 +131,7 @@ class TelaAlunos(TelaBase):
 
         while True:
             cpf = input("cpf: ")
-            if len(cpf) == 11 and cpf.isnumeric():
+            if len(cpf) == 11 and cpf.isdigit():
                 break
             else:    
                 print("CPF está incorreto, por favor informe um CPF válido")
