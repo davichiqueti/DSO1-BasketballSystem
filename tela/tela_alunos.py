@@ -118,7 +118,7 @@ class TelaAlunos(TelaBase):
 
         while True:
             cpf_alteracao = input("cpf: ")
-            if len(cpf_alteracaof) == 11:
+            if len(cpf_alteracao) == 11 and cpf_alteracao.isdigit():
                 break
             else:    
                 print("CPF está incorreto, por favor informe um CPF válido")
@@ -237,15 +237,15 @@ class TelaAlunos(TelaBase):
     def listar_alunos(self, dados_alunos: list):
         self.limpar_tela()
         print('-------- Listagem de Alunos --------')
-        for aluno in dados_alunos:
-            nome = aluno["Nome"]
-            cpf = aluno["CPF"]
-            data_nascimento = aluno["Data de Nascimento"]
-            estado = aluno["estado"]
-            cidade = aluno["cidade"]
-            bairro = aluno["bairro"]
-            matricula = aluno["matricula"]
-            curso = aluno["curso"]
+        for novo_aluno in dados_alunos:
+            nome = novo_aluno["Nome"]
+            cpf = novo_aluno["CPF"]
+            data_nascimento = novo_aluno["Data de Nascimento"]
+            estado = novo_aluno["estado"]
+            cidade = novo_aluno["cidade"]
+            bairro = novo_aluno["bairro"]
+            matricula = novo_aluno["matricula"]
+            curso = novo_aluno["curso"]
             print(f"Nome: {nome}")
             print(f"CPF: {cpf}")
             print(f"Data de nascimento: {data_nascimento}")

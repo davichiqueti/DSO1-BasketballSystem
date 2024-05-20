@@ -159,6 +159,6 @@ class ControladorEquipes:
         Retorna o índice do equipe com o código informado.\n  
         Se nenhuma equipe possuir o código informado retorna `None`
         """
-        for equipe in self.equipe:
+        for equipe in self.equipes:
             if equipe == codigo:
                 return equipe

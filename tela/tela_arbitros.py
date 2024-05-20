@@ -216,14 +216,15 @@ class TelaArbitros(TelaBase):
     def listar_arbitros(self, dados_arbitros: list):
         self.limpar_tela()
         print('-------- Listagem de Arbitros --------')
-        for arbitro in dados_arbitros:
-            nome = arbitro["Nome"]
-            cpf = arbitro["CPF"]
-            data_nascimento = arbitro["Data de Nascimento"]
-            estado = arbitro["estado"]
-            cidade = arbitro["cidade"]
-            bairro = arbitro["bairro"]
-            numero_partidas = arbitro["numero partidas"]
+        for i in range(len(dados_arbitros)):
+            dados_arbitros_dict = dados_arbitros[i]
+            nome = dados_arbitros_dict["Nome"]
+            cpf = dados_arbitros_dict["CPF"]
+            data_nascimento = dados_arbitros_dict["Data de Nascimento"]
+            estado = dados_arbitros_dict["estado"]
+            cidade = dados_arbitros_dict["cidade"]
+            bairro = dados_arbitros_dict["bairro"]
+            numero_partidas = dados_arbitros_dict["numero partidas"]
             print(f"Nome: {nome}")
             print(f"CPF: {cpf}")
             print(f"Data de nascimento: {data_nascimento}")
