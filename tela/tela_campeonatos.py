@@ -23,6 +23,8 @@ class TelaCampeonatos(TelaBase):
 
     def incluir_campeonato(self):
         print("--------Inclusão de Campeonatos--------")
+        dict_incluir_campeonato = dict()
+
         while True:
             codigo_campeonato = input("Insira o codigo do Campeonato: ")
             if codigo_campeonato.isnumeric():
@@ -40,29 +42,32 @@ class TelaCampeonatos(TelaBase):
                 self.mostrar_mensagem('Descrição inválida. Descrição deve ter mais de 10 caracteres')
             else:
                 break
-        equipes = list()
-        #equipes
-        while True:
-            codigo_equipe = input("insira o codigo da equipe para inclusão no Cammpeonato:")
-            if codigo_equipe.isnumeric():
-                codigo_equipe = int(codigo_equipe)
-                equipes.append(codigo_equipe)
 
-            if not self.confirmar_acao("Deseja cadastrar mais uma equipe no campeonato?") and len(equipes) >= 2:
-                break
-            
+        lista_de_codigo = list()
+        while len(lista_de_codigo) < 4 or cadastro_adicional:
+            codigo_equipe = input("insira o codigo da equipe para inclusão no Cammpeonato:")
+            if not codigo_equipe.isnumeric():
+                print("Código inválido, por favor informe um código válido")
+                input("Aperte ENTER para continuar.")
+            elif int(codigo_equipe) in lista_de_codigo:
+                self.mostrar_mensagem('Este código já foi inserido')
             else:
-                print("É necessário pelo menos 2 equipes para incluir um campeonato.")
-                return self.tela_opcoes()
-        
+                codigo_equipe = int(codigo_equipe)
+                lista_de_codigo.append(codigo_equipe)
+
+            if len(lista_de_codigo) >= 4:
+                cadastro_adicional = self.confirmar_acao("Deseja adicionar equipes novamente?")
+            
+
         dict_incluir_campeonato = {
             "codigo_campeonato" : codigo_campeonato,
-            "lista_equipes" : equipes,
-            "descricao": descricao_campeonato
-        }
-
+            "lista_de_codigo" : lista_de_codigo,
+            "descricao_campeonato": descricao_campeonato
+            }
         return dict_incluir_campeonato
-
+            
+                 
+            
 
 
     def incluir_partida_campeonato(self):
@@ -126,40 +131,32 @@ class TelaCampeonatos(TelaBase):
         print("--------Alteração Campeonato--------")
         while True:
             codigo_campeonato_alteracao = input("Insira o codigo do Campeonato: ")
-            if codigo_campeonato.isnumeric():
-                codigo_campeonato = int(codigo_campeonato)
+            if codigo_campeonato_alteracao.isnumeric():
+                codigo_campeonato_alteracao = int(codigo_campeonato_alteracao)
                 break
             else:    
                 print("Código inválido, por favor informe um código válido")
                 input("Aperte ENTER para continuar.")
-
+  
         while True:
-            codigo_campeonato_novo = input("Insira o codigo do Campeonato: ")
-            if codigo_campeonato.isnumeric():
-                codigo_campeonato = int(codigo_campeonato)
+            descricao_campeonato_novo = input("Insira a descrição do Campeonato: ")
+            if descricao_campeonato_novo.isspace():
+                self.mostrar_mensagem('Descrição inválida. Descrição inserida é vazia')
+            if len(descricao_campeonato_novo) < 10:
+                self.mostrar_mensagem('Descrição inválida. Descrição deve ter mais de 10 caracteres')
+            else:
                 break
-            else:    
-                print("Código inválido, por favor informe um código válido")
-                input("Aperte ENTER para continuar.")
 
-        codigos_alteracoes_equipes = list()
-        while True:
-            codigos = input("insira o codigo da equipe do Cammpeonato:")
-            if codigos.isnumeric():
-                codigos = int(codigos)
-                codigos_alteracoes_equipes.append(codigos)
-                self.confirmar_acao("Deseja inserir mais um código de equipe?")
-                if not self.confirmar_acao:
-                    break
-            
-        
+
         dict_alterar_campeonato = {
-            "codigo_campeonato" : codigo_campeonato,
-            "codigos_alteracoes_equipes" : codigos_alteracoes_equipes
+        "codigo_campeonato_alteracao" : codigo_campeonato_alteracao,
+        "descricao_campeonato_novo" : descricao_campeonato_novo,
         }
 
         return dict_alterar_campeonato
-    
+        
+
+            
     def excluir_campeonato(self):
         print("--------Exclusão de Campeonato--------")
         while True:
@@ -178,14 +175,17 @@ class TelaCampeonatos(TelaBase):
         self.limpar_tela()
         print('-------- Listagem de Campeonatos --------')
         for campeonato in dados_campeonatos:
-            campeonato_selecionado = campeonato
-            codigo = dados_campeonatos["codigo_campeonato"]
-            print(f"Campeonato: {campeonato_selecionado.nome}, {campeonato_selecionado.codigo}")
             print()
-            for equipe in campeonato_selecionado.equipe:
-                equipe_selecionada = equipe
-                print(f"Equipe: {equipe_selecionada.nome}, {equipe_selecionada.codigo}")
-                print()
+            codigo = campeonato["codigo_campeonato"]
+            descricao = campeonato["descricao"]
+            equipes = campeonato["equipes"]
+            print(f"Campeonato: {codigo}, {descricao}")
+            print()
+
+            for equipe in equipes:
+                print(f"Equipe: {equipe.nome}, {equipe.codigo}")
+                
+
         self.esperar_resposta()
 
     def selecionar_campeonato(self, dados_campeonatos: list[dict]) -> int:

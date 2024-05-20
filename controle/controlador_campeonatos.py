@@ -1,7 +1,6 @@
 from entidade.campeonato import Campeonato
 from tela.tela_campeonatos import TelaCampeonatos
-from controle.controlador_sistema import *
-import time
+
 
 
 class ControladorCampeonatos:
@@ -62,13 +61,37 @@ class ControladorCampeonatos:
 
     def incluir_campeonato(self):
         dict_incluir_campeonato = self.tela_campeonatos.incluir_campeonato()
-        codigo = dict_incluir_campeonato["codigo_campeonato"]
-        equipes = dict_incluir_campeonato["lista_equipes"]
-        descricao = dict_incluir_campeonato["descricao"]
-        novo_campeonato = Campeonato(codigo, descricao, equipes)
-        if isinstance(novo_campeonato, Campeonato):
-            self.__campeonatos.append(Campeonato)
+        codigo_camp = dict_incluir_campeonato["codigo_campeonato"]
+        descricao = dict_incluir_campeonato["descricao_campeonato"]
+        camp_equipes = list()
+        lista_de_codigo = dict_incluir_campeonato["lista_de_codigo"]
 
+        #verifica se campeonato já está cadastrado
+        for campeonato in self.__campeonatos:
+            if campeonato.codigo == codigo_camp:
+                return self.tela_campeonatos.mostrar_mensagem("O codigo informado já está cadastrado.")
+            
+            
+        for item in lista_de_codigo:
+            equipe = self.controlador_sistema.controlador_equipes.pesquisar_equipe_por_codigo(item)
+            if equipe is None:
+                self.tela_campeonatos.mostrar_mensagem(f'Equipe com código "{item}" não encontrado')
+            else:
+                if equipe.codigo not in camp_equipes:
+                    camp_equipes.append(equipe)
+                else:
+                    return self.__tela_campeonatos.mostrar_mensagem("A equipe já está cadastrada no campeonato.")
+            
+    
+        novo_campeonato = Campeonato(codigo_camp, descricao, camp_equipes)
+        if isinstance(novo_campeonato, Campeonato):
+            self.__campeonatos.append(novo_campeonato)
+            self.tela_campeonatos.mostrar_mensagem(f"Campeonato {novo_campeonato.codigo} incluido.")
+            for item in novo_campeonato.equipes:
+                self.tela_campeonatos.mostrar_mensagem(f"Equipe {item.codigo} cadastrada.")
+            return self.tela_campeonatos.mostrar_mensagem("cadastro finalizado.")
+        else:
+            return self.tela_campeonatos.mostrar_mensagem(f"Campeonato {novo_campeonato.codigo}, {novo_campeonato.descricao} está incorreto")
 
 
 
@@ -101,7 +124,7 @@ class ControladorCampeonatos:
                     return self.tela_campeonatos.mostrar_mensagem("O codigo de partida já está vinculado a uma partida existente nesse campeonato.")
             
             self.campeonato.partida.append(nova_partida)
-            return self.tela_campeonatos.mostrar_mensagem(f"A partida com código {nova_partida.codigo} foi incluida no campeonato {campeonato.nome}, {campeonato.codigo}.")
+            return self.tela_campeonatos.mostrar_mensagem(f"A partida com código {nova_partida.codigo} foi incluida no campeonato {campeonato.codigo}.")
           
 
 
@@ -112,27 +135,18 @@ class ControladorCampeonatos:
             return self.tela_campeonatos.mostrar_mensagem("\nAinda não temos campeonatos cadastrados.\n")
         dict_alterar_campeonato = self.tela_campeonatos.alterar_campeonato()
         #verifica se campeonato existe na lista
+        codigo = dict_alterar_campeonato["codigo_campeonato_alteracao"]
         for camp in self.__campeonatos:
-            if camp.codigo == dict_alterar_campeonato["codigo_campeonato"]:
+            if camp.codigo == codigo:
                 campeonato_alteracao = camp
                 break
             else:
-                self.tela_campeonatos.mostrar_mensagem("Código de Campeonato inválido.")
-                time.sleep(2)
+                self.tela_campeonatos.mostrar_mensagem("Código de Campeonato para alteração é inválido.")
                 return self.tela_campeonatos.alterar_campeonato()
-        equipes_alterar = list()
-        #verificacao equipes
-        for item in dict_alterar_campeonato["codigos_alteracoes_equipes"]:
-            for equipes in self.campeonato.equipe:
-                if equipes.codigo == item:
-                    equipes_alterar.append(equipes)
-                else:
-                    self.tela_campeonatos.mostrar_mensagem(f"Codigo de equipe número: {item} está incorreto")
-                    time.sleep(2)
-                    return self.tela_campeonatos.alterar_campeonato()
-        campeonato_alteracao.codigo = dict_alterar_campeonato["codigo_campeonato"]
-        for item in campeonato_alteracao.equipe:
-            campeonato_alteracao.item = equipes_alterar[item]
+
+        descricao_nova = dict_alterar_campeonato["descricao_campeonato_novo"]
+        campeonato_alteracao.descricao = descricao_nova
+        return self.tela_campeonatos.mostrar_mensagem(f"Campeonato com código {codigo} foi alterada.")
                     
 
 
@@ -141,11 +155,11 @@ class ControladorCampeonatos:
     def excluir_campeonato(self):
         if len(self.__campeonatos) == 0:
             return self.tela_campeonatos.mostrar_mensagem("\nAinda não temos campeonatos cadastrados.\n")
-        info_campeonato = self.tela_campeonatos.excluir_campeonato()
+        codigo_campeonato_exclusao  = self.tela_campeonatos.excluir_campeonato()
         for campeonato in self.__campeonatos:
-            if campeonato.codigo == campeonato.info_campeonato:
+            if campeonato.codigo == codigo_campeonato_exclusao:
                 campeonato_ex = campeonato
-                if self.tela_campeonatos.confirmar_acao(f"Tem certeza que deseja excluir o campeonato com código {info_campeonato}?"):
+                if self.tela_campeonatos.confirmar_acao(f"Tem certeza que deseja excluir o campeonato com código {campeonato_ex.codigo}?"):
                     self.__campeonatos.remove(campeonato_ex)
                     return self.tela_campeonatos.mostrar_mensagem(f"Campeonato excluido.")
         self.tela_campeonatos.mostrar_mensagem("O codigo informado não corresponde a nenhum campeonato cadastrado, por favor digite um código valido")
@@ -161,8 +175,9 @@ class ControladorCampeonatos:
         dados_campeonatos = list()
         for campeonato in self.__campeonatos:
             dados_campeonatos_dict = {
-                "Nome": campeonato.nome,
-                "CPF": arbitro.cpf,
+                "codigo_campeonato": campeonato.codigo,
+                "descricao": campeonato.descricao,
+                "equipes": campeonato.equipes
             }
             dados_campeonatos.append(dados_campeonatos_dict)
         return self.tela_campeonatos.listar_campeonatos(dados_campeonatos)
