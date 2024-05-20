@@ -21,7 +21,12 @@ class TelaEquipes(TelaBase):
             nome = equipe["nome"]
             codigo = equipe["codigo"]
             nome_curso = equipe["nome_curso"]
+            alunos = equipe["alunos"]
             print(f"- EQUIPE: {nome}  CÓDIGO: {codigo} CURSO: {nome_curso}")
+            print('- Jogadores:')
+            for aluno in alunos:
+                print(f'\t - {aluno.nome}({aluno.matricula})')
+            print('\n')
         print('\n')
         self.esperar_resposta()
 
