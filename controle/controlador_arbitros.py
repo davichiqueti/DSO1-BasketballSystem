@@ -99,8 +99,7 @@ class ControladorArbitros:
                 self.tela_arbitros.mostrar_mensagem("CPF informado não corresponde a nenhum arbitro.")
                 return self.tela_arbitros.alterar_arbitro()
         else:
-            self.tela_arbitros.mostrar_mensagem("Nenhum arbitro cadastrado no sistema.")
-            return self.tela_arbitros.alterar_arbitro()
+            return self.tela_arbitros.mostrar_mensagem("Nenhum arbitro cadastrado no sistema.")
 
 
 
@@ -115,9 +114,9 @@ class ControladorArbitros:
                 else:
                     return 
             else:
-                return self.__tela_arbitros.mostrar_mensagem("Arbitro não está cadastrado.")
+                return self.__tela_arbitros.mostrar_mensagem("Nenhum arbitro cadastrado no sistema.")
         else:
-            return self.tela_arbitros.mostrar_mensagem("Arbitro não está cadastrado.")
+            return self.tela_arbitros.mostrar_mensagem("Nenhum arbitro cadastrado no sistema.")
 
 
 
