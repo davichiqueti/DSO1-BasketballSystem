@@ -50,24 +50,26 @@ class ControladorSistema:
     @property
     def controlador_arbitros(self):
         return self.__controlador_arbitros
-    
+
     @controlador_arbitros.setter
     def controlador_arbitros(self, controlador_arbitros: ControladorArbitros):
         if isinstance(controlador_arbitros, ControladorArbitros):
             self.__controlador_arbitros = controlador_arbitros
         else:
-            raise TypeError('ControladorSistema.controlador_arbitros deve ser do tipo "ControladorArbitros"')
+            raise TypeError(
+                'ControladorSistema.controlador_arbitros deve ser do tipo "ControladorArbitros"')
 
     @property
     def controlador_partidas(self):
         return self.__controlador_partidas
-    
+
     @controlador_partidas.setter
     def controlador_partidas(self, controlador_partidas: ControladorPartidas):
         if isinstance(controlador_partidas, ControladorPartidas):
             self.__controlador_partidas = controlador_partidas
         else:
-            raise TypeError('ControladorSistema.controlador_partidas deve ser do tipo "ControladorPartidas"')
+            raise TypeError(
+                'ControladorSistema.controlador_partidas deve ser do tipo "ControladorPartidas"')
 
     @property
     def controlador_alunos(self):
@@ -78,18 +80,8 @@ class ControladorSistema:
         if isinstance(controlador_alunos, ControladorAlunos):
             self.__controlador_alunos = controlador_alunos
         else:
-            raise TypeError("ControladorSistema.__controlador_alunos deve ser do tipo 'ControladorAlunos'.")
-
-    @property
-    def controlador_alunos(self):
-        return self.__controlador_alunos
-
-    @controlador_alunos.setter
-    def controlador_alunos(self, controlador_alunos: ControladorAlunos):
-        if isinstance(controlador_alunos, ControladorAlunos):
-            self.__controlador_alunos = controlador_alunos
-        else:
-            raise TypeError("ControladorSistema.__controlador_alunos deve ser do tipo 'ControladorAlunos'.")
+            raise TypeError(
+                "ControladorSistema.__controlador_alunos deve ser do tipo 'ControladorAlunos'.")
 
     @property
     def controlador_campeonatos(self):
@@ -100,28 +92,38 @@ class ControladorSistema:
         if isinstance(controlador_campeonatos, ControladorCampeonatos):
             self.__controlador_campeonatos = controlador_campeonatos
         else:
-            raise TypeError("ControladorSistema.__controlador_campeonatos deve ser do tipo 'ControladorCampeonatos'.")
+            raise TypeError(
+                "ControladorSistema.__controlador_campeonatos deve ser do tipo 'ControladorCampeonatos'.")
 
+    def inicializa_sistema(self):
+        self.abre_tela()
 
-    def mostrar_opcoes(self):
-        opcoes = {
-            '1': 'Módulo de Cursos',
-            '2': 'Módulo de Equipes',
-            '3': 'Módulo de Arbitros',
-            '4': 'Módulo de Alunos',
-            '5': 'Módulo de Partidas',
-            '6': 'Módulo de Campeonatos',
-            '10': 'Sair'
-        }
-        opcao_escolhida = str()
+    def cadastra_alunos(self):
+        self.__controlador_alunos.abre_tela()
+
+    def cadastra_cursos(self):
+        self.__controlador_cursos.abre_tela()
+
+    def cadastra_arbitros(self):
+        self.__controlador_arbitros.abre_tela()
+
+    def cadastra_emprestimos(self):
+        self.__controlador_campeonatos.abre_tela()
+
+    def cadastra_equipes(self):
+        self.__controlador_equipes.abre_tela()
+
+    def cadastra_partidas(self):
+        self.__controlador_partidas.abre_tela()
+
+    def encerra_sistema(self):
+        exit(0)
+
+    def abre_tela(self):
+        lista_opcoes = {1: self.cadastra_alunos, 2: self.cadastra_cursos, 3: self.cadastra_arbitros,
+                        4: self.cadastra_emprestimos, 5: self.cadastra_equipes, 6: self.cadastra_partidas, 0: self.encerra_sistema}
+
         while True:
-            opcao_escolhida = self.tela_sistema.mostrar_opcoes(opcoes)
-            match opcao_escolhida:
-                case '1': self.controlador_cursos.mostrar_opcoes()
-                case '2': self.controlador_equipes.mostrar_opcoes()
-                case '3': self.controlador_arbitros.mostrar_opcoes()
-                case '4': self.controlador_alunos.mostrar_opcoes()
-                case '5': self.controlador_partidas.mostrar_opcoes()
-                case '6': self.controlador_campeonatos.mostrar_opcoes()
-                case '10': break
-                case _: self.tela_sistema.mostrar_mensagem('Opção Escolhida Não Existe')
+            opcao_escolhida = self.__tela_sistema.tela_opcoes()
+            funcao_escolhida = lista_opcoes[opcao_escolhida]
+            funcao_escolhida()
