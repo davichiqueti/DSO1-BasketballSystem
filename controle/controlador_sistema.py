@@ -99,22 +99,22 @@ class ControladorSistema:
         self.abre_tela()
 
     def cadastra_alunos(self):
-        self.__controlador_alunos.abre_tela()
+        self.__controlador_alunos.tela_alunos.init_opcoes()
 
     def cadastra_cursos(self):
-        self.__controlador_cursos.abre_tela()
+        self.__controlador_cursos.tela_cursos.init_opcoes()
 
     def cadastra_arbitros(self):
-        self.__controlador_arbitros.abre_tela()
+        self.__controlador_arbitros.tela_arbitros.init_opcoes()
 
     def cadastra_emprestimos(self):
-        self.__controlador_campeonatos.abre_tela()
+        self.__controlador_campeonatos.tela_campeonatos.init_opcoes()
 
     def cadastra_equipes(self):
-        self.__controlador_equipes.abre_tela()
+        self.__controlador_equipes.tela_equipes.incluir_equipe()
 
     def cadastra_partidas(self):
-        self.__controlador_partidas.abre_tela()
+        self.__controlador_partidas.mostrar_opcoes()
 
     def encerra_sistema(self):
         exit(0)
@@ -126,4 +126,4 @@ class ControladorSistema:
         while True:
             opcao_escolhida = self.__tela_sistema.tela_opcoes()
             funcao_escolhida = lista_opcoes[opcao_escolhida]
-            funcao_escolhida()
+            return funcao_escolhida

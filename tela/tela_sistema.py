@@ -27,7 +27,7 @@ class TelaSistema(TelaBase):
             opcao_escolhida = 5
         elif values['6']:
             opcao_escolhida = 6
-        elif values['0'] or button in (None, 'Cancelar'):
+        elif '0' in values and values['0'] or button in (None, 'Cancelar'):
             opcao_escolhida = 0
         self.close()
         return opcao_escolhida
