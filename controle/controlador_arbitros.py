@@ -1,9 +1,5 @@
 from entidade.arbitro import Arbitro
-from datetime import date
 from tela.tela_arbitros import TelaArbitros
-from controle.controlador_sistema import *
-import time
-
 
 class ControladorArbitros:
     def __init__(self):
@@ -11,21 +7,17 @@ class ControladorArbitros:
         self.__tela_arbitros = TelaArbitros()
         self.__controlador_sistema = None
 
-
     @property
     def arbitros(self):
         return self.__arbitros
-
 
     @arbitros.setter
     def arbitros(self, arbitros):
         self.__arbitros = arbitros
 
-
     @property
     def tela_arbitros(self) -> TelaArbitros:
         return self.__tela_arbitros
-
 
     @property
     def controlador_sistema(self):
@@ -38,21 +30,20 @@ class ControladorArbitros:
 
 
     def mostrar_opcoes(self):
-        retorno = 0
-        while True:
-            retorno = self.tela_arbitros.tela_opcoes()
-            if retorno == 1:
-                self.incluir_arbitro()
-            elif retorno == 2:
-                self.alterar_arbitro()
-            elif retorno == 3:
-                self.excluir_arbitro()
-            elif retorno == 4:
-                self.listar_arbitros()
-            elif retorno == 10:
-                break
-            else:
-                self.tela_arbitros.mostrar_mensagem('Opção inválida.')
+        retorno = self.__tela_arbitros.mostrar_opcoes()
+        if retorno == 1:
+            self.incluir_arbitro()
+        elif retorno == 2:
+            self.alterar_arbitro()
+        elif retorno == 3:
+            self.excluir_arbitro()
+        elif retorno == 4:
+            self.listar_arbitros()
+        elif retorno == 0:
+            self.controlador_sistema.mostrar_opcoes()
+        else:
+            self.__tela_arbitros.mostra_mensagem("Retornando ao menu principal.")
+
 
 
     def incluir_arbitro(self):
@@ -67,11 +58,11 @@ class ControladorArbitros:
                                )
         for arbitro_cadastrado in self.__arbitros:
             if arbitro_cadastrado.cpf == novo_arbitro.cpf:
-                self.__tela_arbitros.mostrar_mensagem("Arbitro já cadastrado!")
+                self.__tela_arbitros.mostra_mensagem("Arbitro já cadastrado!")
                 return self.incluir_arbitro()
 
         self.__arbitros.append(novo_arbitro)
-        return self.__tela_arbitros.mostrar_mensagem("Novo arbitro adicionado!")
+        return self.__tela_arbitros.mostra_mensagem("Novo arbitro adicionado!")
         
         
 
@@ -89,7 +80,7 @@ class ControladorArbitros:
             #verifica se o CPF novo já está sendo usado
             for arbitros_existentes in self.__arbitros:
                     if dados_arbitro_alteracao["CPF"] == arbitros_existentes.cpf:
-                        return self.tela_arbitros.mostrar_mensagem("O CPF informado já está cadastrado no sistema, insira um CPF válido.")
+                        return self.tela_arbitros.mostra_mensagem("O CPF informado já está cadastrado no sistema, insira um CPF válido.")
                 
             if novo_arbitro in self.__arbitros:
                 novo_arbitro.nome = dados_arbitro_alteracao["Nome"]
@@ -100,15 +91,15 @@ class ControladorArbitros:
                 novo_arbitro.endereco.bairro = dados_arbitro_alteracao["Bairro"]
                 novo_arbitro.numero_partidas = dados_arbitro_alteracao["Numero de Partidas"]
                 self.tela_arbitros.limpar_tela()
-                return self.tela_arbitros.mostrar_mensagem(f"Cadastro do arbitro {novo_arbitro.nome}, {novo_arbitro.cpf}, numero de partidas {novo_arbitro.numero_partidas}, endereço: {novo_arbitro.endereco.estado}, {novo_arbitro.endereco.cidade}, {novo_arbitro.endereco.bairro} alterado.")
+                return self.tela_arbitros.mostra_mensagem(f"Cadastro do arbitro {novo_arbitro.nome}, {novo_arbitro.cpf}, numero de partidas {novo_arbitro.numero_partidas}, endereço: {novo_arbitro.endereco.estado}, {novo_arbitro.endereco.cidade}, {novo_arbitro.endereco.bairro} alterado.")
             
             else:
                 self.tela_arbitros.limpar_tela()
-                self.tela_arbitros.mostrar_mensagem("CPF informado não corresponde a nenhum arbitro.")
+                self.tela_arbitros.mostra_mensagem("CPF informado não corresponde a nenhum arbitro.")
                 return self.tela_arbitros.alterar_arbitro()
             
         else:
-            return self.tela_arbitros.mostrar_mensagem("Nenhum arbitro cadastrado no sistema.")
+            return self.tela_arbitros.mostra_mensagem("Nenhum arbitro cadastrado no sistema.")
 
 
 
@@ -119,19 +110,19 @@ class ControladorArbitros:
             if arbitro_exclusao != None:
                 if self.__tela_arbitros.confirmar_acao("Tem certeza que deseja excluir o arbitro?"):
                     self.__arbitros.remove(arbitro_exclusao)
-                    return self.__tela_arbitros.mostrar_mensagem("Arbitro foi removido")
+                    return self.__tela_arbitros.mostra_mensagem("Arbitro foi removido")
                 else:
                     return 
             else:
-                return self.__tela_arbitros.mostrar_mensagem("Nenhum arbitro cadastrado no sistema.")
+                return self.__tela_arbitros.mostra_mensagem("Nenhum arbitro cadastrado no sistema.")
         else:
-            return self.tela_arbitros.mostrar_mensagem("Nenhum arbitro cadastrado no sistema.")
+            return self.tela_arbitros.mostra_mensagem("Nenhum arbitro cadastrado no sistema.")
 
 
 
     def listar_arbitros(self):
         if len(self.__arbitros) == 0:
-            return self.tela_arbitros.mostrar_mensagem("\nAinda não temos arbitros cadastrados.\n")
+            return self.tela_arbitros.mostra_mensagem("\nAinda não temos arbitros cadastrados.\n")
         
         dados_arbitros = list()
         for novo_arbitro in self.__arbitros:
@@ -154,3 +145,14 @@ class ControladorArbitros:
         for item in self.__arbitros:
             if item.cpf == cpf:
                 return item
+            
+
+    def retornar(self):
+        self.__controlador_sistema.abre_tela()
+
+    def abre_tela(self):
+        lista_opcoes = {1: self.incluir_arbitro, 2: self.alterar_arbitro, 3: self.excluir_arbitro, 4: self.listar_arbitros, 0: self.retornar}
+
+        continua = True
+        while continua:
+            lista_opcoes[self.__tela_arbitros.mostrar_opcoes()]()
