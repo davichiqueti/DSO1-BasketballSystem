@@ -59,8 +59,8 @@ class ControladorArbitros():
             return self.__tela_arbitros.mostra_mensagem("Nenhum arbitro cadastrado no sistema.")
         cpf = self.__tela_arbitros.selecionar_arbitro()
 
-        arbitro_exclusao = self.pesquisar_arbitros_por_cpf(str(cpf))
-        self.__arbitroDAO.remove(arbitro_exclusao.cpf)
+        arbitro_exclusao = self.pesquisar_arbitros_por_cpf(cpf)
+        self.__arbitroDAO.remove(cpf)
         return self.__tela_arbitros.mostra_mensagem("Arbitro foi removido")
             
 

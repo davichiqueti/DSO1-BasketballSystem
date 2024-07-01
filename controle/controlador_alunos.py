@@ -109,7 +109,7 @@ class ControladorAlunos():
         aluno_exclusao = self.pesquisar_aluno_por_cpf(str(cpf_exclusao))
         print(aluno_exclusao.cpf)
         print(aluno_exclusao.nome)
-        self.__alunoDAO.remove(aluno_exclusao.cpf)
+        self.__alunoDAO.remove(cpf_exclusao)
         self.listar_aluno()
         self.__tela_alunos.mostra_mensagem("Aluno excluído com sucesso!")   
         self.retornar()
