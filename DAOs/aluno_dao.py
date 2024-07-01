@@ -10,12 +10,12 @@ class AlunoDAO(DAO):
         super().add(aluno.cpf, aluno)
 
     def update(self, aluno: Aluno):
-        if((aluno is not None) and isinstance(aluno, Aluno) and isinstance(aluno.cpf, int)):
-            super().update(aluno.cpf, aluno)
+        super().update(aluno.cpf, aluno)
 
-    def get(self, key:Aluno):
-        if isinstance(key, Aluno):
+    def get(self, key:str):
+        if isinstance(key, str):
             return super().get(key)
 
-    def remove(self , aluno: Aluno):
-        return super().remove(aluno)
+    def remove(self , key: str):
+        if isinstance(key, str):
+            return super().remove(key)

@@ -9,13 +9,13 @@ class ArbitroDAO(DAO):
     def add(self, arbitro: Arbitro):
         super().add(arbitro.cpf, arbitro)
 
-    def update(self, arbitro: Arbitro):
-        if((arbitro is not None) and isinstance(arbitro, Arbitro) and isinstance(arbitro.cpf, int)):
-            super().update(arbitro.cpf, arbitro)
+    def update(self, key: Arbitro):
+        super().update(key.cpf, key)
 
-    def get(self, key:int):
-        if isinstance(key, int):
+    def get(self, key:str):
+        if isinstance(key, str):
             return super().get(key)
 
-    def remove(self, key: Arbitro):
-        return super().remove(key)
+    def remove(self, key: str):
+        if isinstance(key, str):
+            return super().remove(key)
