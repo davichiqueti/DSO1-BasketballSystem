@@ -1,4 +1,5 @@
 import pickle
+import os
 from abc import ABC, abstractmethod
 from exceptions.input_incorreto_exception import InputIncorreto
 

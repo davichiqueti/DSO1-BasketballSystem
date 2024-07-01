@@ -1,4 +1,4 @@
-from DAO import DAO
+from DAOs.dao import DAO
 from entidade.partida import Partida
 
 #cada entidade terá uma classe dessa, implementação bem simples.
@@ -7,7 +7,7 @@ class PartidaDAO(DAO):
         super().__init__('partida.pkl')
 
     def add(self, partida: Partida):
-            super().add(partida.codigo, Partida)
+            super().add(partida.codigo, partida)
 
     def update(self, partida: Partida):
         if((partida is not None) and isinstance(partida, Partida) and isinstance(partida.codigo, int)):
@@ -17,6 +17,5 @@ class PartidaDAO(DAO):
         if isinstance(key, int):
             return super().get(key)
 
-    def remove(self, key:int):
-        if(isinstance(key, int)):
-            return super().remove(key)
+    def remove(self, partida:Partida):
+        return super().remove(partida)

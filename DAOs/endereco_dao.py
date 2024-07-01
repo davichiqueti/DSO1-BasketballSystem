@@ -1,4 +1,4 @@
-from DAO import DAO
+from DAOs.dao import DAO
 from entidade.endereco import Endereco
 
 #cada entidade terá uma classe dessa, implementação bem simples.
@@ -7,7 +7,7 @@ class EnderecoDAO(DAO):
         super().__init__('endereco.pkl')
 
     def add(self, endereco: Endereco):
-            super().add(endereco.bairro, Endereco)
+            super().add(endereco.bairro, endereco)
 
     def update(self, endereco: Endereco):
         if((endereco is not None) and isinstance(endereco, Endereco) and isinstance(endereco.bairro, str)):
