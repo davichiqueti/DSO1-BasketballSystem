@@ -189,7 +189,7 @@ class TelaAlunos():
         ]
         self.__window = sg.Window('Exclusão de Alunos').Layout(layout)
         button, values = self.open()
-        cpf = values['cpf']
+        cpf = str(values['cpf'])
         self.close()
         
         while True:

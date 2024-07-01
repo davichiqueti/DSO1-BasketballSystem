@@ -94,7 +94,7 @@ class TelaCampeonatos():
 
     
             string_todos_campeonatos += "Código: " + codigo + '\n'
-            string_todos_campeonatos += "Nome do arbitro: " + nome_arbitro + '\n'
+            string_todos_campeonatos += "CPF do arbitro: " + nome_arbitro + '\n'
             string_todos_campeonatos += "Nome da primeira equipe: " + equipe1_nome + '\n'
             string_todos_campeonatos += "Pontuacao da primeira equipe: " + str(pontuacao_equipe2) +  '\n'
             string_todos_campeonatos += "Nome da segunda equipe: " + equipe2_nome + '\n'
