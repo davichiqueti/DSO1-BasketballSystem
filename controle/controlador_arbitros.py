@@ -29,38 +29,29 @@ class ControladorArbitros():
         
 
     def alterar_arbitro(self):
-        if len(self.__arbitroDAO.get_all()) != 0:
+        if len(self.__arbitroDAO.get_all()) == 0:
+            return self.__tela_arbitros.mostra_mensagem("Nenhum arbitro cadastrado no sistema.")
+        else:
+            self.listar_arbitros()
             dados_arbitro_alteracao = self.__tela_arbitros.alterar_arbitro()
-            cpf_alteracao = dados_arbitro_alteracao["CPF alteracao"]
-            novo_arbitro = self.pesquisar_arbitros_por_cpf(cpf_alteracao)
+            cpf_alteracao = dados_arbitro_alteracao["CPF"]
+            arbitro_alteracao = self.pesquisar_arbitros_por_cpf(str(cpf_alteracao))
 
-            #verifica se o CPF atual realmente está vinculado a um arbitro na lista
-            #for item in self.__arbitros:
-                #if item.cpf == cpf_alteracao:
-                   # novo_arbitro = item
-
-            #verifica se o CPF novo já está sendo usado
+            
             for arbitros_existentes in self.__arbitroDAO.get_all():
-                    if dados_arbitro_alteracao["CPF"] == arbitros_existentes.cpf:
+                    if cpf_alteracao == arbitros_existentes.cpf:
                         return self.__tela_arbitros.mostra_mensagem("O CPF informado já está cadastrado no sistema, insira um CPF válido.")
                 
-            if novo_arbitro in self.__arbitroDAO.get_all():
-                novo_arbitro.nome = dados_arbitro_alteracao["Nome"]
-                novo_arbitro.cpf = dados_arbitro_alteracao["CPF"]
-                novo_arbitro.data_nascimento = dados_arbitro_alteracao["Data de nascimento"]
-                novo_arbitro.endereco.estado = dados_arbitro_alteracao["Estado"]
-                novo_arbitro.endereco.cidade = dados_arbitro_alteracao["Cidade"]
-                novo_arbitro.endereco.bairro = dados_arbitro_alteracao["Bairro"]
-                novo_arbitro.numero_partidas = dados_arbitro_alteracao["Numero de Partidas"]
-                return self.__tela_arbitros.mostra_mensagem(f"Cadastro do arbitro {novo_arbitro.nome}, {novo_arbitro.cpf}, numero de partidas {novo_arbitro.numero_partidas}, endereço: {novo_arbitro.endereco.estado}, {novo_arbitro.endereco.cidade}, {novo_arbitro.endereco.bairro} alterado.")
-            
-            else:
-                self.__tela_arbitros.mostra_mensagem("CPF informado não corresponde a nenhum arbitro.")
-                return self.alterar_arbitro()
-            
-        else:
-            return self.__tela_arbitros.mostra_mensagem("Nenhum arbitro cadastrado no sistema.")
-
+            arbitro_alteracao.nome = dados_arbitro_alteracao["Nome"]
+            arbitro_alteracao.data_nascimento = dados_arbitro_alteracao["Data de nascimento"]
+            arbitro_alteracao.endereco.estado = dados_arbitro_alteracao["Estado"]
+            arbitro_alteracao.endereco.cidade = dados_arbitro_alteracao["Cidade"]
+            arbitro_alteracao.endereco.bairro = dados_arbitro_alteracao["Bairro"]
+            arbitro_alteracao.numero_partidas = dados_arbitro_alteracao["Numero de Partidas"]
+            self.__arbitroDAO.update(arbitro_alteracao)
+            self.__tela_arbitros.mostra_mensagem('Arbitro alterado')
+            return self.listar_arbitros()
+     
 
 
     def excluir_arbitro(self):
@@ -68,11 +59,8 @@ class ControladorArbitros():
             return self.__tela_arbitros.mostra_mensagem("Nenhum arbitro cadastrado no sistema.")
         cpf = self.__tela_arbitros.selecionar_arbitro()
 
-        arbitro_exclusao = self.pesquisar_arbitros_por_cpf(cpf)
-        if arbitro_exclusao is None:
-            return self.__tela_arbitros.mostra_mensagem("CPF não corresponde a um arbitro cadastrado.")
-        
-        self.__arbitroDAO.remove(arbitro_exclusao)
+        arbitro_exclusao = self.pesquisar_arbitros_por_cpf(str(cpf))
+        self.__arbitroDAO.remove(arbitro_exclusao.cpf)
         return self.__tela_arbitros.mostra_mensagem("Arbitro foi removido")
             
 
@@ -98,8 +86,8 @@ class ControladorArbitros():
     def pesquisar_arbitros_por_cpf(self, cpf: str) -> Arbitro:
         for item in (self.__arbitroDAO.get_all()):
             if item.cpf == cpf:
-                return item
-        return None
+                if isinstance(item, Arbitro):
+                    return item
             
 
     def retornar(self):

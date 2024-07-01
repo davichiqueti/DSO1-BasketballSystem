@@ -103,27 +103,23 @@ class ControladorAlunos():
                 return self.__tela_alunos.mostra_mensagem(f"O cadastro do aluno: {novo_aluno.nome}, CPF: {novo_aluno.cpf} . Foi alterado com sucesso!")
 
 
-# Exclusão: Ok
     def excluir_aluno(self):
         self.listar_aluno()
         cpf_exclusao = self.__tela_alunos.selecionar_aluno()
-        aluno_exclusao = self.pesquisar_aluno_por_cpf(cpf_exclusao)
-
-        if aluno_exclusao is None:
-            self.__tela_alunos.mostra_mensagem("ATENCAO: Aluno não existente")
-        else:
-            print(aluno_exclusao.cpf)
-            print(aluno_exclusao.nome)
-            self.__alunoDAO.remove(aluno_exclusao.cpf)
-            self.listar_aluno()
-            self.__tela_alunos.mostra_mensagem("Aluno excluído com sucesso!")   
-            self.retornar()
+        aluno_exclusao = self.pesquisar_aluno_por_cpf(str(cpf_exclusao))
+        print(aluno_exclusao.cpf)
+        print(aluno_exclusao.nome)
+        self.__alunoDAO.remove(aluno_exclusao.cpf)
+        self.listar_aluno()
+        self.__tela_alunos.mostra_mensagem("Aluno excluído com sucesso!")   
+        self.retornar()
 
 
     def pesquisar_aluno_por_cpf(self, cpf:str) -> Aluno:
-        for aluno in self.__alunoDAO.get_all():
+        for aluno in (self.__alunoDAO.get_all()):
             if aluno.cpf == cpf:
-                return aluno
+                if isinstance(aluno, Aluno):
+                    return aluno 
 
     def retornar(self):
         self.__controlador_sistema.abre_tela()

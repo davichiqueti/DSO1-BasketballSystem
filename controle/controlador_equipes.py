@@ -81,13 +81,8 @@ class ControladorEquipes:
             return
         
         aluno = self.__controlador_sistema.controlador_alunos.pesquisar_aluno_por_cpf(str(cpf_aluno))
-
-        if aluno is None:
-            self.__tela_equipes.mostra_mensagem(f'Aluno com CPF "{cpf_aluno}" não encontrado')
-            return
-        
         equipe.alunos.append(aluno.nome)
-        self.__equipeDAO.update(equipe)
+        self.__equipeDAO.update(equipe.codigo)
         self.__tela_equipes.mostra_mensagem(f'Aluno {aluno.nome} adicionado com sucesso')
     
     def excluir_aluno_equipe(self):
