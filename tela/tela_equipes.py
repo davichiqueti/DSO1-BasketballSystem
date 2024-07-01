@@ -1,108 +1,195 @@
-from tela.tela_base import TelaBase
+from datetime import datetime
+import PySimpleGUI as sg
 
 
-class TelaEquipes(TelaBase):
+class TelaEquipes():
     def __init__(self):
-        super().__init__()
+        self.__window = None
+        self.init_opcoes()
 
-    def mostrar_opcoes(self, opcoes: dict) -> str:
-        self.limpar_tela()
-        print('--- MÓDULO DE EQUIPES ---')
-        print('\nOpções disponíveis:')
-        for codigo, acao in opcoes.items():
-            print(f'{codigo} - {acao}')
-        opcao_escolhida = input('\nSelecione uma opção: ')
+
+
+    def mostrar_opcoes(self):
+        self.init_opcoes()
+        button, values = self.open()
+
+        if values['1']:
+            opcao_escolhida = 1
+        if values['2']:
+            opcao_escolhida = 2
+        if values['3']:
+            opcao_escolhida = 3
+        if values['4']:
+            opcao_escolhida = 4
+        if values['5']:
+            opcao_escolhida = 5
+        if values['0'] or button in (None, 'Cancelar'):
+            opcao_escolhida = 0
+
+        self.close()
         return opcao_escolhida
+    
 
-    def listar_equipes(self, dados_equipes: list[dict]):
-        self.limpar_tela()
-        print('--- LISTAGEM DE EQUIPES ---\n')
-        for equipe in dados_equipes:
-            nome = equipe["nome"]
-            codigo = equipe["codigo"]
-            nome_curso = equipe["nome_curso"]
-            alunos = equipe["alunos"]
-            print(f"- EQUIPE: {nome}  CÓDIGO: {codigo} CURSO: {nome_curso}")
-            print('- Jogadores:')
-            for aluno in alunos:
-                print(f'\t - {aluno.nome}({aluno.matricula})')
-            print('\n')
-        print('\n')
-        self.esperar_resposta()
+    # representando os componentes da tela
+    def init_opcoes(self):
+        sg.ChangeLookAndFeel('DarkTeal4')
+        layout = [
+            [sg.Text('-------- Equipes ----------', font=("Helvica", 25))],
+            [sg.Text('Escolha sua opção', font=("Helvica", 15))],
+            [sg.Radio('Incluir Equipes', "RD1", key='1')],
+            [sg.Radio('Excluir Equipes', "RD1", key='2')],
+            [sg.Radio('Listar Equipes', "RD1", key='3')],
+            [sg.Radio('Incluir Aluno em Equipes', "RD1", key='4')],
+            [sg.Radio('Excluir Aluno em Equipes', "RD1", key='5')],
+            [sg.Radio('Retornar', "RD1", key='0')],
+            [sg.Button('Confirmar'), sg.Cancel('Cancelar')],
+        ]
+        self.__window = sg.Window('Sistema de livros').Layout(layout)
 
-    def incluir_equipe(self) -> dict:
-        self.limpar_tela()
-        print('--- CADASTRO DE EQUIPE ---\n')
-        nome = input('Nome da equipe: ')
-        if not (2 <= len(nome) <= 60):
-            self.mostrar_mensagem('O nome da equipe deve ter entre 2 a 60 caracteres')
-            return self.incluir_equipe()
-        codigo = input('Código da equipe: ').strip()
-        if not codigo.isnumeric():
-            self.mostrar_mensagem('O código deve ser um número inteiro')
-            return self.incluir_equipe()
-        codigo_curso = input('Código do curso: ').strip()
-        if not codigo.isnumeric():
-            self.mostrar_mensagem('Só existem cadastros de curso com códigos númericos')
-            return self.incluir_equipe()
-        # Tratamento para os alunos das equipes
-        adicionar_aluno = self.confirmar_acao('Adicionar alunos na equipe?')
-        codigos_alunos = list()
-        while adicionar_aluno:
-            codigo_aluno = input(f'Código do {len(codigos_alunos) + 1}° aluno: ').strip()
-            if not codigo_aluno.isnumeric():
-                self.mostrar_mensagem('Só existem cadastros de alunos com códigos númericos')
-            codigo_aluno = int(codigo_aluno)
-            if codigo_aluno in codigos_alunos:
-                self.mostrar_mensagem('Este código de aluno já foi inserido na lista')
-            codigos_alunos.append(codigo_aluno)
-            adicionar_aluno = self.confirmar_acao('Adicionar mais um aluno na equipe?')
+    def incluir_equipe(self):
+        dados_inclusão_equipes = {}
+        sg.ChangeLookAndFeel('DarkTeal4')
+        layout = [
+            [sg.Text('-------- DADOS EQUIPES ----------', font=("Helvica", 25))],
+            [sg.Text('Nome:', size=(15, 1)), sg.InputText('', key='Nome')],
+            [sg.Text('Codigo:', size=(15, 1)), sg.InputText('', key='Codigo')],
+            [sg.Text('Código do Curso:', size=(15, 1)), sg.InputText('', key='Codigo_curso')],
+            [sg.Button('Confirmar'), sg.Cancel('Cancelar')]
+        ]
+        self.__window = sg.Window('Criação de Equipes').Layout(layout)
+
+        button, values = self.open()
+        nome = values['Nome']
+        codigo = values['Codigo']
+        codigo_curso = values['Codigo_curso']
+        self.close()
+
+        try:
+            if not (2 <= len(values['Nome']) <= 60):
+                self.mostra_mensagem('O nome da equipe deve ter entre 2 a 60 caracteres')
+                return self.incluir_equipe()
+        except Exception:
+            sg.popup_error('O nome da equipe deve ter entre 2 a 60 caracteres')
         
-        return {
+        try:
+            if not (2 <= len(values['Nome']) <= 60):
+                self.mostra_mensagem('O código deve ser um número inteiro')
+                return self.incluir_equipe()
+        except Exception:
+            sg.popup_error('O código deve ser um número inteiro')
+        
+        try:
+            if not values['Codigo_curso'].isnumeric():
+                self.mostra_mensagem('O código do curso deve ser um número inteiro')
+                return self.incluir_equipe()
+        except Exception:
+            sg.popup_error('O código do curso deve ser um número inteiro')
+        
+        dados_inclusão_equipes = {
             'nome': nome.upper(),
             'codigo': int(codigo),
             'codigo_curso': int(codigo_curso),
-            'codigos_alunos': codigos_alunos
-        }
+    }
+        return dados_inclusão_equipes
 
-    def excluir_equipe(self) -> int:
-        self.limpar_tela()
-        print('--- EXCLUIR EQUIPE ---\n')
-        codigo = input('Código da equipe a ser exclúida: ')
-        if not codigo.isnumeric():
-            self.mostrar_mensagem('Tentativa de exclusão por código não númerico')
-            return self.excluir_equipe()
+
+
+
+    def selecionar_equipe(self):
+        sg.ChangeLookAndFeel('DarkTeal4')
+        layout = [
+            [sg.Text('-------- SELECIONAR EQUIPE ----------', font=("Helvica", 25))],
+            [sg.Text('Digite o código da equipe que deseja selecionar:', size=(50, 1))],
+            [sg.Text('Código:', size=(15, 1)), sg.InputText('', key='Codigo')],
+            [sg.Button('Confirmar'), sg.Cancel('Cancelar')],
+        ]
+        self.__window = sg.Window('Seleção de Equipe').Layout(layout)
+
+        button, values = self.open()
+        codigo = int(values['Codigo'])
+        self.close()
+
         return int(codigo)
 
-    def alterar_equipe(self) -> dict:
-        self.limpar_tela()
-        dados_retorno = dict()
-        print('--- ALTERAR EQUIPE ---\n')
-        # Tratamento para o código a ser alterado
-        codigo_antigo = input('Código da equipe a ser alterada: ')
-        if not codigo_antigo.isnumeric():
-            self.mostrar_mensagem('Tentativa de alteração por código não númerico')
-            return self.alterar_equipe()
-        dados_retorno["codigo_antigo"] = int(codigo_antigo)
-        # Tratamento para o novo código (Se for inserido)
-        novo_codigo = input('Novo código: ')
-        if novo_codigo and not novo_codigo.isspace():
-            if not novo_codigo.isnumeric():
-                self.mostrar_mensagem('O novo código deve ser um inteiro')
-                return self.alterar_equipe()
-            dados_retorno["novo_codigo"] = int(novo_codigo)
-        # Tratamento para o código do novo curso da equipe(Se for inserido)
-        codigo_novo_curso = input('Código do novo curso: ')
-        if codigo_novo_curso and not codigo_novo_curso.isspace():
-            if not codigo_novo_curso.isnumeric():
-                self.mostrar_mensagem('O código do novo curso deve ser um inteiro')
-                return self.alterar_equipe()
-            dados_retorno["codigo_novo_curso"] = int(codigo_novo_curso)
-        # Tratamento para o novo nome (Se for inserido)
-        novo_nome = input('Novo nome da equipe: ')
-        if novo_nome and not novo_nome.isspace():
-            if not (5 <= len(novo_nome) <= 60):
-                self.mostrar_mensagem('O novo nome da equipe deve ter entre 5 a 60 caracteres')
-                return self.alterar_equipe()
-            dados_retorno["novo_nome"] = novo_nome.upper()
-        return dados_retorno
+    def listar_equipes(self, dados_equipes):
+        string_todos_cursos = ""
+
+
+        for dado in dados_equipes:
+            codigo = str(dado.get('codigo', ''))
+            nome = str(dado.get('nome', ''))
+            nome_curso = str(dado.get('nome_curso', ''))
+            lista_alunos = dado.get('alunos', [])
+            
+    
+            print(f"Código: {codigo}, Nome: {nome}, Curso: {nome_curso},")
+    
+    
+            string_todos_cursos += "Código: " + codigo + '\n'
+            string_todos_cursos += "Nome: " + nome + '\n'
+            string_todos_cursos += "Nome do Curso: " + nome_curso + '\n'
+            if len(lista_alunos) == 0:
+                string_todos_cursos += "Alunos: sem alunos cadastrados." + '\n\n'
+            else:
+                string_todos_cursos += "Alunos: " + '\n'
+                for aluno in lista_alunos:
+                    string_todos_cursos += "Nome: " + aluno + '\n'
+                string_todos_cursos += '\n'
+    
+        sg.Popup('-------- LISTA DE CURSOS ----------', string_todos_cursos)
+
+
+    def inclui_aluno_equipe(self):
+        sg.ChangeLookAndFeel('DarkTeal4')
+        layout = [
+            [sg.Text('-------- INCLUSÃO DE ALUNO EM EQUIPE ----------', font=("Helvica", 25))],
+            [sg.Text('Digite o código da equipe:', size=(50, 1))],
+            [sg.Text('Código:', size=(15, 1)), sg.InputText('', key='Codigo')],
+            [sg.Text('Digite o CPF do aluno:', size=(50, 1))],
+            [sg.Text('CPF:', size=(15, 1)), sg.InputText('', key='cpf_aluno')],
+            [sg.Button('Confirmar'), sg.Cancel('Cancelar')],
+        ]
+        self.__window = sg.Window('Inclusão de Aluno em Equipe').Layout(layout)
+
+        button, values = self.open()
+        codigo = values['Codigo']
+        cpf_aluno = values['cpf_aluno']
+        self.close()
+
+        lista_inclusao = (int(codigo), str(cpf_aluno))
+
+        return lista_inclusao
+    
+
+
+
+    def exclui_aluno_equipe(self):
+        sg.ChangeLookAndFeel('DarkTeal4')
+        layout = [
+            [sg.Text('-------- EXCLUSÃO DE ALUNO EM EQUIPE ----------', font=("Helvica", 25))],
+            [sg.Text('Digite o código da equipe:', size=(50, 1))],
+            [sg.Text('Código:', size=(15, 1)), sg.InputText('', key='Codigo')],
+            [sg.Text('Digite o CPF do aluno:', size=(50, 1))],
+            [sg.Text('CPF:', size=(15, 1)), sg.InputText('', key='cpf_aluno')],
+            [sg.Button('Confirmar'), sg.Cancel('Cancelar')],
+        ]
+        self.__window = sg.Window('Inclusão de Aluno em Equipe').Layout(layout)
+
+        button, values = self.open()
+        codigo = values['Codigo']
+        cpf_aluno = values['cpf_aluno']
+        self.close()
+
+        lista_exclusao = (int(codigo), str(cpf_aluno))
+
+        return lista_exclusao
+
+    def mostra_mensagem(self, msg):
+        sg.popup("", msg)
+
+    def close(self):
+        self.__window.Close()
+
+    def open(self):
+        button, values = self.__window.Read()
+        return button, values

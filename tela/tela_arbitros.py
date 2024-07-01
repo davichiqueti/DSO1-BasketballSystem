@@ -1,23 +1,11 @@
 from datetime import datetime
-from tela.tela_base import TelaBase
 import PySimpleGUI as sg
 
 
-class TelaArbitros(TelaBase):
+class TelaArbitros():
     def __init__(self):
-        super().__init__()
         self.__window = None
-        self.mostrar_opcoes()
-
-    def mostra_mensagem(self, msg):
-        sg.popup("", msg)
-
-    def close(self):
-        self.__window.Close()
-
-    def open(self):
-        button, values = self.__window.Read()
-        return button, values
+        self.init_opcoes()
 
     def mostrar_opcoes(self):
         self.init_opcoes()
@@ -78,7 +66,7 @@ class TelaArbitros(TelaBase):
         self.close()
 
         try:
-            if self.verificar_string_alpha(nome) and 4 <= len(nome) <= 60:
+            if len(nome) <= 60:
                 pass
         except ValueError:
             self.mostra_mensagem("nome está incorreto, por favor informe um nome válido")
@@ -101,7 +89,7 @@ class TelaArbitros(TelaBase):
                 self.incluir_arbitro()
 
         while True:
-            if self.verificar_string_alpha(estado) and 2 <= len(estado) <= 18:
+            if  len(estado) <= 18:
                 break
             else:
                 self.mostra_mensagem("O estado informado está incorreto.")
@@ -109,14 +97,14 @@ class TelaArbitros(TelaBase):
 
 
         while True:
-            if self.verificar_string_alpha(cidade) and 3 <= len(cidade) <= 60:
+            if len(cidade) <= 60:
                 break
             else:
                 self.mostra_mensagem("A cidade informada é inválida.")
                 self.incluir_arbitro()
 
         while True:
-            if self.verificar_string_alpha(bairro) and 4 <= len(bairro) <= 60:
+            if len(bairro) <= 60:
                 break
             else:
                 self.mostra_mensagem("O bairro informado é inválido.")
@@ -144,32 +132,14 @@ class TelaArbitros(TelaBase):
 
 
     def alterar_arbitro(self):
-
-        self.limpar_tela()
-        print()
-        print('-------- Informe o CPF atual do arbitro para fazer a alteração --------')
-
+        cpf = self.selecionar_arbitro()
         while True:
             cpf = input("CPF: ")
             if len(cpf) == 11 and cpf.isdigit():
                 break
             else:
                 print("CPF está incorreto, por favor informe um CPF válido")
-                input("Aperte ENTER para continuar.")
-
-        cpf_alteracao = cpf
-        self.limpar_tela()
-
-        print(
-            '-------- Informe os dados para alteração de um arbitro já cadastrado --------')
-
-        while True:
-            cpf = input("CPF: ")
-            if len(cpf) == 11 and cpf.isdigit():
-                break
-            else:
-                print("CPF está incorreto, por favor informe um CPF válido")
-                input("Aperte ENTER para continuar.")
+                return self.mostrar_opcoes
 
         while True:
             nome = input("Nome: ")
@@ -223,7 +193,6 @@ class TelaArbitros(TelaBase):
                 input("Aperte ENTER para continuar.")
 
         dados_arbitro_alteracao = {
-            "CPF alteracao": cpf_alteracao,
             "Nome": nome,
             "CPF": cpf,
             "Data de nascimento": data_nascimento,
@@ -234,35 +203,50 @@ class TelaArbitros(TelaBase):
         }
         return dados_arbitro_alteracao
 
-    def excluir_arbitro(self) -> str:
-        self.limpar_tela()
-        print('-------- Informe o CPF para exclusão --------')
-        cpf = input("CPF: ")
-        if isinstance(cpf, str) and len(cpf) == 11 and cpf.isnumeric():
-            cpf_exclusao = cpf
-            return cpf_exclusao
-        else:
-            print("cpf informado não encontrado.")
-            return self.excluir_arbitro()
 
-    def listar_arbitros(self, dados_arbitros: list):
-        self.limpar_tela()
-        print('-------- Listagem de Arbitros --------')
-        for i in range(len(dados_arbitros)):
-            dados_arbitros_dict = dados_arbitros[i]
-            nome = dados_arbitros_dict["Nome"]
-            cpf = dados_arbitros_dict["CPF"]
-            data_nascimento = dados_arbitros_dict["Data de Nascimento"]
-            estado = dados_arbitros_dict["estado"]
-            cidade = dados_arbitros_dict["cidade"]
-            bairro = dados_arbitros_dict["bairro"]
-            numero_partidas = dados_arbitros_dict["numero partidas"]
-            print(f"Nome: {nome}")
-            print(f"CPF: {cpf}")
-            print(f"Data de nascimento: {data_nascimento}")
-            print(f"Estado: {estado}")
-            print(f"Cidade: {cidade}")
-            print(f"Bairro: {bairro}")
-            print(f"Número de partidas: {numero_partidas}")
-            print()
-        self.esperar_resposta()
+#listagem: ok!
+    def selecionar_arbitro(self):
+        sg.ChangeLookAndFeel('DarkTeal4')
+        layout = [
+        [sg.Text('-------- Selecionar Arbitros ----------', font=("Helvica", 25))],
+        [sg.Text('Digite o CPF do arbitro que deseja selecionar:', font=("Helvica", 15))],
+        [sg.Text('CPF:', size=(15, 1)), sg.InputText('', key='cpf')],
+        [sg.Button('Confirmar'), sg.Cancel('Cancelar')]]
+        self.__window = sg.Window('Seleciona arbitros').Layout(layout)
+
+        button, values = self.open()
+        cpf = int(values['cpf'])
+        self.close()
+        return cpf
+    
+
+    def listar_arbitros(self, dados_arbitros):
+        string_todos_arbitros = ""
+        for dado in dados_arbitros:
+            string_todos_arbitros = string_todos_arbitros + "Nome do arbitro: " + str(dado["Nome"]) + '\n'
+            string_todos_arbitros = string_todos_arbitros + "CPF do arbitro: " + str(dado["CPF"]) + '\n'
+            string_todos_arbitros = string_todos_arbitros + "Número de partidas: " + str(dado["numero_partidas"]) + '\n\n'
+
+        sg.Popup('-------- Lista de arbitros ----------', string_todos_arbitros)
+
+    
+
+
+
+    def mostra_mensagem(self, msg):
+        sg.popup("", msg)
+
+    def close(self):
+        self.__window.Close()
+
+    def open(self):
+        button, values = self.__window.Read()
+        return button, values
+    
+    def verificar_string_alpha(self, variavel) -> bool:
+        if isinstance(variavel, str):
+            variavel = variavel.split()
+            for caracter in variavel:
+                if not caracter.isalpha():
+                    return False
+            return True

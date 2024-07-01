@@ -1,226 +1,116 @@
-from tela.tela_base import TelaBase
+from datetime import datetime
+import PySimpleGUI as sg
 
-
-class TelaCampeonatos(TelaBase):
+class TelaCampeonatos():
     def __init__(self):
-        super(). __init__()
-
-    def tela_opcoes(self):
-        self.limpar_tela()
-        print("--------Campeonatos--------")
-        print("Escolha uma opção:")
-        print("1 - Incluir campeonatos")
-        print("2 - Incluir partidas em um campeonato")
-        print("3 - Alterar campeonatos")
-        print("4 - Excluir campeonatos")
-        print("5 - Listar campeonatos")
-        print("6 - Exibir relatórios de campeonatos")
-        print("10 - Retornar")
-
-        opcao = int(input("Escolha uma opcao: "))
-        return opcao
+        self.__window = None
+        self.init_opcoes()
 
 
-    def incluir_campeonato(self):
-        print("--------Inclusão de Campeonatos--------")
-        dict_incluir_campeonato = dict()
+    def mostrar_opcoes(self):
+        self.init_opcoes()
+        button, values = self.open()
+
+        if values['1']:
+            opcao_escolhida = 1
+        if values['2']:
+            opcao_escolhida = 2
+        if values['0'] or button in (None, 'Cancelar'):
+            opcao_escolhida = 0
+
+        self.close()
+        return opcao_escolhida
+
+    def init_opcoes(self):
+        sg.ChangeLookAndFeel('DarkTeal4')
+        layout = [
+            [sg.Text('-------- Campeonatos de Basquete----------', font=("Helvica", 25))],
+            [sg.Text('Escolha sua opção', font=("Helvica", 15))],
+            [sg.Radio('Criar um campeonato', "RD1", key='1')],
+            [sg.Radio('Listar campeonatos', "RD1", key='2')],
+            [sg.Radio('Retornar', "RD1", key='0')],
+            [sg.Button('Confirmar'), sg.Cancel('Cancelar')]
+        ]
+        self.__window = sg.Window('Campeonatos').Layout(layout)
+
+    def criar_campeonato(self):
+        dict_incluir_campeonato = {}
+        sg.ChangeLookAndFeel('DarkTeal4')
+        layout = [
+            [sg.Text('-------- DADOS CAMPEONATO ----------', font=("Helvica", 25))],
+            [sg.Text('Insira um código para esse campeonato:', size=(30, 1)), sg.InputText('', key='codigo_campeonato')],
+            [sg.Text('Insira um código de partida existente:', size=(30, 1)), sg.InputText('', key='codigo_partida')],
+            [sg.Button('Confirmar'), sg.Cancel('Cancelar')]
+        ]
+        self.__window = sg.Window('Criação de campeonato').Layout(layout)        
+
+        button, values = self.open()
+        codigo_campeonato = values['codigo_campeonato']
+        codigo_partida = values['codigo_partida']
+        self.close()
 
         while True:
-            codigo_campeonato = input("Insira o codigo do Campeonato: ")
             if codigo_campeonato.isnumeric():
                 codigo_campeonato = int(codigo_campeonato)
                 break
             else:    
-                print("Código inválido, por favor informe um código válido")
-                input("Aperte ENTER para continuar.")
-
+                self.mostra_mensagem("Código de campeonato inválido, por favor informe um código válido")
+                self.criar_campeonato()
         while True:
-            descricao_campeonato = input("Insira a descrição do Campeonato: ")
-            if descricao_campeonato.isspace():
-                self.mostrar_mensagem('Descrição inválida. Descrição inserida é vazia')
-            if len(descricao_campeonato) < 10:
-                self.mostrar_mensagem('Descrição inválida. Descrição deve ter mais de 10 caracteres')
-            else:
+            if codigo_partida.isnumeric():
+                codigo_partida = int(codigo_partida)
                 break
+            else:    
+                self.mostra_mensagem("Código de partida inválido, por favor informe um código válido")
+                self.criar_campeonato()
 
-        lista_de_codigo = list()
-        while len(lista_de_codigo) < 4 or cadastro_adicional:
-            codigo_equipe = input("insira o codigo da equipe para inclusão no Cammpeonato:")
-            if not codigo_equipe.isnumeric():
-                print("Código inválido, por favor informe um código válido")
-                input("Aperte ENTER para continuar.")
-            elif int(codigo_equipe) in lista_de_codigo:
-                self.mostrar_mensagem('Este código já foi inserido')
-            else:
-                codigo_equipe = int(codigo_equipe)
-                lista_de_codigo.append(codigo_equipe)
-
-            if len(lista_de_codigo) >= 4:
-                cadastro_adicional = self.confirmar_acao("Deseja adicionar equipes novamente?")
-            
 
         dict_incluir_campeonato = {
             "codigo_campeonato" : codigo_campeonato,
-            "lista_de_codigo" : lista_de_codigo,
-            "descricao_campeonato": descricao_campeonato
+            "codigo_partida" : codigo_partida,
             }
         return dict_incluir_campeonato
+
+
+
+
+    def listar_campeonato(self, dados_campeonatos):
+        string_todos_campeonatos = ""
+
+
+        for dado in dados_campeonatos:
+            codigo = str(dado.get('codigo', ''))
+            nome_arbitro = str(dado.get('arbitro', ''))
+            equipe1_nome = str(dado.get('equipe1', ''))
+            pontuacao_equipe1 = dado.get('pontuacao_equipe1', '')
+            equipe2_nome = str(dado.get('equipe2', ''))
+            pontuacao_equipe2 = dado.get('pontuacao_equipe2', '')
+            vencedor = dado.get('vencedor', '')
+
             
-                 
-            
+            print(f"Código: {codigo}, Nome arbitro: {nome_arbitro}, Equipe1: {equipe1_nome},")
+            print(f"pontuacao equipe 1: {pontuacao_equipe1}, equipe2: {equipe2_nome}, pontuacao equipe 2: {pontuacao_equipe2},")
+            print(f"Vencedor: {vencedor}")
 
-
-    def incluir_partida_campeonato(self):
-
-        #verifica qual opcao o usuario quer
-        print("--------Inclusão de Partidas no Campeonato--------")
-        print("É necessário ter ao menos uma partida cadastrada para utilizar esse módulo.")
-        print("Deseja Cadastrar uma partida ou informar o código de uma partida existente?")
-        print("1 - Cadastrar partida")
-        print("2 - Incluir uma partida já existente")
-        print("10 - Sair")
-        retorno = int(input("Escolha uma opção: "))
-
-        #tratamento para cada opcao
-        while True:
-            if retorno == 10:
-                break
-
-            if retorno == 2:
-                self.limpar_tela()
-                print("--------Incluir Partida no Campeonato--------")
-                dict_retorno = []
-                while True:
-                    codigo_campeonato = input("Insira o codigo do Campeonato: ")
-                    if codigo_campeonato.isnumeric():
-                        codigo_campeonato = int(codigo_campeonato)
-                        break
-                    else:    
-                        print("Código inválido, por favor informe um código válido")
-                        input("Aperte ENTER para continuar.")
-
-                while True:
-                    codigo_partida = input("Insira o código da partida: ")
-                    if codigo_partida.isnumeric():
-                        codigo_partida = int(codigo_partida)
-                        break
-                    else:    
-                        print("Código inválido, por favor informe um código válido")
-                        input("Aperte ENTER para continuar.")
-                
-                dict_retorno = {
-                    "codigo_campeonato" : codigo_campeonato,
-                    "codigo_partida" : codigo_partida
-                }
-                return dict_retorno
-
-            elif retorno == 1:
-                dict_retorno = {
-                    "codigo_campeonato" : 'incluir'
-                }
-                return dict_retorno
-
-            else:    
-                print("Código inválido, por favor informe um código válido")
-                input("Aperte ENTER para continuar.")
-
+    
+            string_todos_campeonatos += "Código: " + codigo + '\n'
+            string_todos_campeonatos += "Nome do arbitro: " + nome_arbitro + '\n'
+            string_todos_campeonatos += "Nome da primeira equipe: " + equipe1_nome + '\n'
+            string_todos_campeonatos += "Pontuacao da primeira equipe: " + str(pontuacao_equipe2) +  '\n'
+            string_todos_campeonatos += "Nome da segunda equipe: " + equipe2_nome + '\n'
+            string_todos_campeonatos += "Pontuacao da segunda equipe: " + str(pontuacao_equipe1) +  '\n\n'
+            string_todos_campeonatos += "Vencedor dessa rodada: " + str(vencedor) + '\n\n\n'
+    
+        sg.Popup('-------- LISTA DE CAMPEONATOS ----------', string_todos_campeonatos)
 
         
 
-    def alterar_campeonato(self):
-        print("--------Alteração Campeonato--------")
-        while True:
-            codigo_campeonato_alteracao = input("Insira o codigo do Campeonato: ")
-            if codigo_campeonato_alteracao.isnumeric():
-                codigo_campeonato_alteracao = int(codigo_campeonato_alteracao)
-                break
-            else:    
-                print("Código inválido, por favor informe um código válido")
-                input("Aperte ENTER para continuar.")
-  
-        while True:
-            descricao_campeonato_novo = input("Insira a descrição do Campeonato: ")
-            if descricao_campeonato_novo.isspace():
-                self.mostrar_mensagem('Descrição inválida. Descrição inserida é vazia')
-            if len(descricao_campeonato_novo) < 10:
-                self.mostrar_mensagem('Descrição inválida. Descrição deve ter mais de 10 caracteres')
-            else:
-                break
+    def mostra_mensagem(self, msg):
+        sg.popup("", msg)
 
+    def close(self):
+        self.__window.Close()
 
-        dict_alterar_campeonato = {
-        "codigo_campeonato_alteracao" : codigo_campeonato_alteracao,
-        "descricao_campeonato_novo" : descricao_campeonato_novo,
-        }
-
-        return dict_alterar_campeonato
-        
-
-            
-    def excluir_campeonato(self):
-        print("--------Exclusão de Campeonato--------")
-        while True:
-            codigo_campeonato_exclusao = input("Insira o codigo para exclusão do Campeonato: ")
-            if codigo_campeonato_exclusao.isnumeric():
-                codigo_campeonato_exclusao = int(codigo_campeonato_exclusao)
-                break
-            else:    
-                print("Código inválido, por favor informe um código válido")
-                input("Aperte ENTER para continuar.")
-                return self.alterar_campeonato()
-
-        return codigo_campeonato_exclusao
-
-    def listar_campeonatos(self, dados_campeonatos):
-        self.limpar_tela()
-        print('-------- Listagem de Campeonatos --------')
-        for campeonato in dados_campeonatos:
-            print()
-            codigo = campeonato["codigo_campeonato"]
-            descricao = campeonato["descricao"]
-            equipes = campeonato["equipes"]
-            print(f"Campeonato: {codigo}, {descricao}")
-            print()
-
-            for equipe in equipes:
-                print(f"Equipe: {equipe.nome}, {equipe.codigo}")
-                
-
-        self.esperar_resposta()
-
-    def selecionar_campeonato(self, dados_campeonatos: list[dict]) -> int:
-        print('Selecione um dos campeonatos abaixo')
-        codigos = set()
-        for campeonato in self.dados_campeonatos:
-            print(f'- {campeonato["nome"]} (Código {campeonato["codigo"]})')
-            codigos.add(campeonato['codigo'])
-        codigo = input('\nDigite o código do campeonato selecionado: ').strip()
-        if not codigo.isnumeric():
-            self.mostrar_mensagem('O código inserido não é númerico. Tente novamente')
-            return self.selecionar_campeonato(dados_campeonatos)
-        elif int(codigo) not in codigos:
-            self.mostrar_mensagem('O código inserido não pertence a nenhum dos campeonatos listados')
-            return self.selecionar_campeonato(dados_campeonatos)
-        else:
-            return int(codigo)
-
-    def exibir_relatorios_campeonato(self, dados_relatorios: dict):
-        self.limpar_tela()
-        print('--- RELÁTORIOS CAMPEONATO ---\n')
-        print(f'Campeonato {dados_relatorios["descricao_campeonato"]}')
-        # Exibindo as posições de cada equipe no campeonato
-        print("Pódio do campeonato:")
-        for i in range(len(dados_relatorios['podio'])):
-            equipe = dados_relatorios['podio'][i]
-            print(f'\t - {i}° Lugar: {equipe["nome"]}({equipe["codigo"]}) {equipe["pontos"]} Pontos')
-        self.esperar_resposta()
-        print('\nEquipes que mais marcaram pontos:')
-        for i in range(len(dados_relatorios['equipes_mais_pontos'])):
-            equipe = dados_relatorios['equipes_mais_pontos'][i]
-            print(f'\t - {i}° Lugar: {equipe["nome"]}({equipe["codigo"]}) {equipe["pontos"]} Pontos')
-        self.esperar_resposta()
-        print('\nJogadores que mais marcaram pontos:')
-        for i in range(len(dados_relatorios['alunos_mais_pontos'])):
-            jogador = dados_relatorios['alunos_mais_pontos'][i]
-            print(f'\t - {i}° Lugar: {jogador["nome"]}({jogador["codigo"]}) {jogador["pontos"]} Pontos')
-        self.mostrar_mensagem('Fim dos relátorios')
+    def open(self):
+        button, values = self.__window.Read()
+        return button, values

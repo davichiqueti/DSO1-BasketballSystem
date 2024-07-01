@@ -1,15 +1,10 @@
-from tela.tela_base import TelaBase
 import PySimpleGUI as sg
 
 
-class TelaSistema(TelaBase):
+class TelaSistema():
     def __init__(self):
-        super().__init__()
         self.__window = None
-        self.tela_opcoes()
-
-    def close(self):
-        self.__window.close()
+        self.init_components()
 
 #retorna opção para o controlador sistema
     def tela_opcoes(self):
@@ -17,18 +12,19 @@ class TelaSistema(TelaBase):
         button, values = self.__window.Read()
         if values['1']:
             opcao_escolhida = 1
-        elif values['2']:
+        if values['2']:
             opcao_escolhida = 2
-        elif values['3']:
+        if values['3']:
             opcao_escolhida = 3
-        elif values['4']:
+        if values['4']:
             opcao_escolhida = 4
-        elif values['5']:
+        if values['5']:
             opcao_escolhida = 5
-        elif values['6']:
+        if values['6']:
             opcao_escolhida = 6
-        elif '0' in values and values['0'] or button in (None, 'Cancelar'):
+        if values['0'] or button in (None, 'Cancelar'):
             opcao_escolhida = 0
+        
         self.close()
         return opcao_escolhida
 
@@ -45,6 +41,17 @@ class TelaSistema(TelaBase):
             [sg.Radio('Módulo de Campeonatos', "RD1", key='4')],
             [sg.Radio('Módulo de Equipes', "RD1", key='5')],
             [sg.Radio('Módulo de Partidas', "RD1", key='6')],
+            [sg.Radio('Encerrar Sistema', "RD1", key='0')],
             [sg.Button('Confirmar'), sg.Cancel('Cancelar')]
         ]
         self.__window = sg.Window('Gestão de Campeonato de Basquete').Layout(layout)
+
+    def mostra_mensagem(self, msg):
+        sg.popup("", msg)
+
+    def close(self):
+        self.__window.Close()
+
+    def open(self):
+        button, values = self.__window.Read()
+        return button, values

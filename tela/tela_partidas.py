@@ -1,79 +1,127 @@
-from tela.tela_base import TelaBase
+import PySimpleGUI as sg
 from datetime import datetime, date
 
 
-class TelaPartidas(TelaBase):
+class TelaPartidas():
     def __init__(self):
-        super().__init__()
+        self.__window = None
+        self.init_opcoes()
 
-    def mostrar_opcoes(self, opcoes: dict) -> str:
-        self.limpar_tela()
-        print('--- MÓDULO DE PARTIDAS ---')
-        print('\nOpções disponíveis:')
-        for codigo, acao in opcoes.items():
-            print(f'{codigo} - {acao}')
-        opcao_escolhida = input('\nSelecione uma opção: ')
+        #Listagem
+
+    def mostrar_opcoes(self):
+        self.init_opcoes()
+        button, values = self.open()
+        if values['1']:
+            opcao_escolhida = 1
+        if values['2']:
+            opcao_escolhida = 2
+        if values['3']:
+            opcao_escolhida = 3
+        if values['0'] or button in (None, 'Cancelar'):
+            opcao_escolhida = 0
+        self.close()
         return opcao_escolhida
 
-    def listar_partidas(self, dados_partidas: list[dict]):
-        self.limpar_tela()
-        print('--- LISTAGEM DE PARTIDAS ---\n')
-        for partida in dados_partidas:
-            codigo = partida["codigo"]
-            data = partida["data"]
-            arbitro = partida['arbitro']
-            print(f"Data Partida: {data.strftime('%d/%m/%Y')}   Código: {codigo}")
-            print(f'Árbitro: {arbitro["nome"]} ({arbitro["cpf"]})')
-            if partida["empate"]:
-                print(' Resultado: EMPATE')
-            else:
-                print(f'Resultado: Equipe "{partida["vencedor"].nome}" Vencedora!')
-            for equipe, pontuacao in partida['pontuacao'].items():
-                print(f"Pontuação da Equipe {equipe.nome}: [{pontuacao['total']} Pontos]")
-                for aluno, pontuacao_aluno in pontuacao['pontuacao_individual'].items():
-                    print(f'\t - Jogador: {aluno.nome}({aluno.matricula}) Pontos: {pontuacao_aluno}')
-            print('\n\n')
-        self.esperar_resposta()
+    # representando os componentes da tela
+    def init_opcoes(self):
+        sg.ChangeLookAndFeel('DarkTeal4')
+        layout = [
+            [sg.Text('-------- PARTIDAS ----------', font=("Helvica", 25))],
+            [sg.Text('Escolha sua opção', font=("Helvica", 15))],
+            [sg.Radio('Listar Partidas', "RD1", key='1')],
+            [sg.Radio('Incluir Partidas', "RD1", key='2')],
+            [sg.Radio('Excluir Partidas', "RD1", key='3')],
+            [sg.Radio('Retornar', "RD1", key='0')],
+            [sg.Button('Confirmar'), sg.Cancel('Cancelar')],
+        ]
+        self.__window = sg.Window('Partidas').Layout(layout)
 
-    def incluir_partida(self) -> dict:
-        self.limpar_tela()
-        print('--- CADASTRO DE PARTIDA ---\n')
-        # Tratamento das equipes
-        codigo_equipe_1 = input('Código da Equipe 1: ').strip()
-        codigo_equipe_2= input('Código da Equipe 2: ').strip()
-        if not (codigo_equipe_1.isnumeric() and codigo_equipe_2.isnumeric()):
-            self.mostrar_mensagem('O código das Equipes devem ser valores númericos')
-            return self.incluir_partida()
-        # Tratamento do arbitro
-        cpf_arbitro = input('CPF do árbitro (Apenas números): ').strip()
-        if not (cpf_arbitro.isnumeric() and len(cpf_arbitro) == 11):
-            self.mostrar_mensagem('O cpf do Árbitro deve conter os 11 dígitos do CPF sem caracteres adicionais')
-            return self.incluir_partida()
-        # Tratamento da data da partida
-        data_atual = datetime.now()
+
+
+    def listar_partidas(self, dados_partidas):
+        string_todas_partidas = ""
+        for dado in dados_partidas:
+            codigo = str(dado.get('codigo', ''))
+            nome_arbitro = str(dado.get('arbitro', ''))
+            nome_equipe1 = str(dado.get('equipe1', ''))
+            nome_equipe2 = str(dado.get('equipe2', ''))
+
+
+            print(f"Código: {codigo}, Equipes: {nome_equipe1} e {nome_equipe2}, {nome_arbitro}")
+
+            string_todas_partidas += "Código da Partida: " + codigo + '\n'
+            string_todas_partidas += "Nome do Arbitro: " + nome_arbitro + '\n'
+            string_todas_partidas += "Equipes: " + nome_equipe1 + "  VS  " + nome_equipe2 + '\n\n'
+
+        sg.Popup('-------- Lista de Partidas ----------', string_todas_partidas)
+
+    def incluir_partida(self):
+        sg.ChangeLookAndFeel('DarkTeal4')
+        layout = [
+        [sg.Text('-------- Dados Partidas ----------', font=("Helvica", 25))],
+        [sg.Text('Codigo:', size=(15, 1)), sg.InputText('', key='1')],
+        [sg.Text('CPF do Arbitro:', size=(15, 1)), sg.InputText('', key='2')],
+        [sg.Text('Código da Equipe 1:', size=(15, 1)), sg.InputText('', key='3')],
+        [sg.Text('Código da Equipe 2:', size=(15, 1)), sg.InputText('', key='4')],
+        [sg.Button('Confirmar'), sg.Cancel('Cancelar')]
+        ]
+        self.__window = sg.Window('Sistema de partidas').Layout(layout)
+
+        button, values = self.open()
+
+        codigo = int(values['1'])
+        cpf_arbitro = values['2']
+        equipe1 = int(values['3'])
+        equipe2 = int(values['4'])
+        self.close()
         while True:
-            data_partida = input("Data da partida (dd/mm/aaaa): ")
-            try:
-                data_partida = datetime.strptime(data_partida, "%d/%m/%Y")
-                if data_partida > data_atual:
-                    self.mostrar_mensagem('A data da partida não é válida. Posterior a data atual')
-                    continue
+            if len(cpf_arbitro) != 11:
+                self.mostra_mensagem('O CPF deve ser um número válido.')
+                return self.mostrar_opcoes()
+            else:
                 break
-            except ValueError:
-                print("A Data da partida está incorreta, por favor informe uma data no modelo dd/mm/aaaa.")
-                input("Aperte ENTER para continuar.")   
-        return {
-            'data': data_partida,
-            'cpf_arbitro': cpf_arbitro,
-            'codigo_equipe_1': int(codigo_equipe_1),
-            'codigo_equipe_2': int(codigo_equipe_2)
-        }
 
-    def excluir_partida(self) -> int:
-        self.limpar_tela()
-        print('--- EXCLUIR PARTIDA ---\n')
-        codigo = input('Código da partida a ser exclúida: ')
-        if not codigo.isnumeric():
-            self.mostrar_mensagem('Tentativa de exclusão por código não númerico')
-            return self.excluir_partida()
-        return int(codigo)
+        dicionario_incluir_partida = {
+                                    '1': codigo,
+                                    '2': cpf_arbitro,
+                                    '3': equipe1,
+                                    '4': equipe2
+        }
+        
+        return dicionario_incluir_partida
+    
+
+    def selecionar_partida(self):
+        sg.ChangeLookAndFeel('DarkTeal4')
+        layout = [
+        [sg.Text('-------- Dados Cursos ----------', font=("Helvica", 25))],
+        [sg.Text('Codigo da Partida:', size=(15, 1)), sg.InputText('', key='codigo')],
+        [sg.Button('Confirmar'), sg.Cancel('Cancelar')]
+        ]
+        self.__window = sg.Window('Sistema de basquete').Layout(layout)
+
+        button, values = self.open()
+        codigo = int(values['codigo'])
+        self.close()
+
+        while True:
+            if not codigo != int:
+                self.mostra_mensagem('O código deve ser um número inteiro')
+                return self.mostrar_opcoes()
+            else:
+                break
+
+        return codigo
+        
+
+    def mostra_mensagem(self, msg):
+        sg.popup("", msg)
+
+    def close(self):
+        self.__window.Close()
+
+    def open(self):
+        button, values = self.__window.Read()
+        return button, values
+    
