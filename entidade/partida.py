@@ -1,5 +1,3 @@
-from entidade.arbitro import Arbitro
-from entidade.equipe import Equipe
 from datetime import datetime
 
 
@@ -7,13 +5,9 @@ class Partida:
     def __init__(
         self,
         codigo: int,
-        data: datetime,
-        empate: bool,
-        vencedor: Equipe | None,
-        perdedor: Equipe | None,
-        arbitro: Arbitro,
-        equipes: list[Equipe],
-        pontuacao: dict,
+        cpf_arbitro: str,
+        equipe1: int,
+        equipe2: int,
     ):
         # Tratamento para código
         if isinstance(codigo, int):
@@ -21,54 +15,22 @@ class Partida:
         else:
             raise TypeError('Partida.codigo deve ser do tipo "int"')
         # Tratamento para data
-        if isinstance(data, datetime):
-            self.__data = data
+
+        if isinstance(cpf_arbitro, str):
+            self.__cpf_arbitro = cpf_arbitro
         else:
-            raise TypeError('Partida.data deve ser do tipo "Date"')
-        # Tratamento para vencedor, perdedor e empate
-        if isinstance(empate, bool):
-            self.__empate = empate
-        else:
-            raise TypeError('Partida.empate deve ser do tipo "bool"')
-        if empate:
-            if vencedor is None and perdedor is None:
-                self.__vencedor = vencedor
-                self.__perdedor = perdedor
-            else:
-                raise TypeError('Partida.vencedor e Partida.perdedor devem ser nulos em caso de empate')
-        else:
-            if isinstance(vencedor, Equipe) and isinstance(perdedor, Equipe):
-                self.__vencedor = vencedor
-                self.__perdedor = perdedor
-            else:
-                raise TypeError('Partida.vencedor e Partida.perdedor devem ser do tipo "Equipe"')
-        # Tramento para arbitro
-        if isinstance(arbitro, Arbitro):
-            self.__arbitro = arbitro
-        else:
-            raise TypeError('Partida.arbitro deve ser do tipo "Arbitro"')
+            raise TypeError('Partida.cpf_arbitro deve ser do tipo "str"')
         # Tratamento para a lista de equipes da partida
-        if isinstance(equipes, list):
-            self.__equipes = equipes
+        if isinstance(equipe1, int):
+            self.__equipe1 = equipe1
         else:
-            raise TypeError('Partida.equipes deve ser do tipo "list"')
+            raise TypeError('Partida.equipes1 deve ser do tipo "int"')
         # Tratamento para a pontuação
-        if isinstance(pontuacao, dict):
-            self.__pontuacao = pontuacao
+        if isinstance(equipe2, int):
+            self.__equipe2 = equipe2
         else:
-            raise TypeError('Partida.pontuacao deve ser do tipo "dict"')
-
-    @property
-    def empate(self) -> bool:
-        return self.__empate
-
-    @property
-    def vencedor(self) -> Equipe:
-        return self.__vencedor
-
-    @property
-    def perdedor(self) -> Equipe:
-        return self.__perdedor
+            raise TypeError('Partida.equipes2 deve ser do tipo "int"')
+        # Tratamento para a pontuação
 
     @property
     def codigo(self) -> int:
@@ -82,38 +44,36 @@ class Partida:
             raise TypeError('Partida.codigo deve ser do tipo "int"')
 
     @property
-    def data(self) -> datetime:
-        return self.__data
+    def cpf_arbitro(self) -> str:
+        return self.__cpf_arbitro
 
-    @data.setter
-    def data(self, data: datetime):
-        if isinstance(data, datetime):
-            self.__data = data
-        else:
-            raise TypeError('Partida.data deve ser do tipo "Date"')
-
-    @property
-    def arbitro(self) -> Arbitro:
-        return self.__arbitro
-
-    @arbitro.setter
-    def arbitro(self, arbitro: Arbitro) -> Arbitro:
-        if isinstance(arbitro, Arbitro):
-            self.__arbitro = arbitro
+    @cpf_arbitro.setter
+    def arbitro(self, cpf_arbitro: str):
+        if isinstance(cpf_arbitro, str):
+            self.__cpf_arbitro = cpf_arbitro
         else:
             raise TypeError('Partida.arbitro deve ser do tipo "Arbitro"')
 
     @property
-    def pontuacao(self) -> dict[Equipe, int]:
-        return self.__pontuacao
-
-    @pontuacao.setter
-    def pontuacao(self, pontuacao: dict):
-        if isinstance(pontuacao, dict):
-            self.__pontuacao = pontuacao
-        else:
-            raise TypeError('Partida.pontuacao deve ser do tipo "dict"')
+    def equipe1(self) -> int:
+        return self.__equipe1
 
     @property
-    def equipes(self) -> list[Equipe]:
-        return self.__equipes
+    def equipe2(self) -> int:
+        return self.__equipe2
+    
+    @equipe1.setter
+    def equipe1(self, equipe1: int):
+        if isinstance(equipe1, int):
+            self.__equipe1 = equipe1
+        else:
+            raise TypeError("Partida.equipe1 deve ser do tipo str.")
+
+    @equipe2.setter
+    def equipe2(self, equipe2: int):
+        if isinstance(equipe2, int):
+            self.__equipe2 = equipe2
+        else:
+            raise TypeError("Partida.equipe2 deve ser do tipo str.")
+
+
